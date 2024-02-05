@@ -1,5 +1,12 @@
 <?php
 
+    // Verificar si se recibió una solicitud GET
+    if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+        http_response_code(405);
+        echo "Only GET requests";
+        exit(-1);
+    }
+
     $url = 'https://api.twitch.tv/helix/streams';
 
     $headers = array(
