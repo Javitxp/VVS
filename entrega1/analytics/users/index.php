@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'GET') {
     exit(-1);
 }
 
+//Configurar url y autorizacion y client-id en header
 $url = 'https://api.twitch.tv/helix/users?id='.$_GET["id"];
 
 $headers = array(
@@ -14,6 +15,7 @@ $headers = array(
     'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87'
 );
 
+//Configurar curl
 $curl = curl_init();
 
 curl_setopt($curl, CURLOPT_URL, $url);
