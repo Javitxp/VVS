@@ -36,10 +36,10 @@
 
             // Imprimir la información en formato JSON
             header("Content-Type: application/json");
-            $obj = json_decode($stream_info,true);
-            $array = $obj['data'];
-            $json = json_encode($array[0]);
-            echo $json;
+            //$array = $stream_info['data'];
+            //$json = json_encode($array[0]);
+            //echo $json;
+            echo $response;
         } else {
             echo "No se encontraron datos de streams.";
         }  
