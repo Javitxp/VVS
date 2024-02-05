@@ -29,17 +29,16 @@
             $stream_info = array();
             foreach ($streams_data['data'] as $stream) {
                 $stream_info[] = array(
-                    'user_name' => $stream['user_name'],
-                    'title' => $stream['title']
+                    'title' => $stream['title'],
+                    'user_name' => $stream['user_name']
                 );
             }
 
             // Imprimir la información en formato JSON
             header("Content-Type: application/json");
-            //$array = $stream_info['data'];
-            //$json = json_encode($array[0]);
-            //echo $json;
-            echo $response;
+            $data = json_encode($stream_info);
+            echo $data;
+
         } else {
             echo "No se encontraron datos de streams.";
         }  
