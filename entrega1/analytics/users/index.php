@@ -1,9 +1,7 @@
 <?php
 
-// URL de la API de Twitch
 $url = 'https://api.twitch.tv/helix/users?id='.$_GET["id"];
 
-// Encabezados de la solicitud
 $headers = array(
     'Authorization: Bearer m8n110x82us492oc94ciqwx97iuo3t',
     'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87'
@@ -23,7 +21,11 @@ if ($response === false) {
     echo "Error al realizar la solicitud: " . $error;
 } else {
     header("Content-Type: application/json");
-    echo $response;  
+    $obj = json_decode($response, true);
+    $array = $obj["data"];
+    $json = json_encode($array[0]);
+    echo $json;
+
 }
 
 curl_close($curl);
