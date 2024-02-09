@@ -35,10 +35,14 @@ if ($response === false) {
     $error = curl_error($curl);
     echo "Error al realizar la solicitud: " . $error;
 } else {
-    header("Content-Type: application/json");
     $obj = json_decode($response, true);
     $array = $obj["data"];
+    if($array == null || count($array) == 0){
+        echo "There is no user with id: ".$_GET["id"];
+        exit(-1);
+    }
     $json = json_encode($array[0]);
+    header("Content-Type: application/json");
     echo $json;
 
 }
