@@ -7,6 +7,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'GET') {
     exit(-1);
 }
 
+// Verificar si hay parámetro id
+if (!isset($_GET['id'])) {
+    echo "Parameter id required";
+    exit(-1);
+}
+
 //Configurar url y autorizacion y client-id en header
 $url = 'https://api.twitch.tv/helix/users?id='.$_GET["id"];
 
