@@ -1,6 +1,7 @@
 <?php
 
     include "../../utils/getTop3Games.php";
+    include "../../utils/getTop40Videos.php";
 
     // Verificar si se recibió una solicitud GET
     if ($_SERVER['REQUEST_METHOD'] != 'GET') {
@@ -20,11 +21,11 @@
         //echo $id;
         //$array = getTop40Videos($id);
         //$json = json_encode($array);
-        //header("Content-Type: application/json");
+//header("Content-Type: application/json");
         //echo $json;
     }
     $json = json_encode($top3_games);
-    header("Content-Type: application/json");
-    echo $json;
-    
+        header("Content-Type: application/json");
+        echo $json;
+        
 ?>
