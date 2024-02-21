@@ -19,19 +19,19 @@
         exit(-1);
     }
 
-    $topsOfTheTops = array()
+    $topsOfTheTops = array();
     foreach ($top3_games as $game) {
         $id = $game["id"];
-        $name = $game["name"]
+        $name = $game["name"];
         $array = getTop40Videos($id);
 
         $topUser = $array[0];
         $user = $topUser["user_name"];
         setNew40GamesInDB($array,$conn);
 
-        $totalVideos = getVideosFromUserFromDB($user, $conn)
-        $sum = getSumViewsFromUserFromDB($user, $conn)
-        $dataMostViewed = getMostViewedFromUserFromDB($user, $conn)
+        $totalVideos = getVideosFromUserFromDB($user, $conn);
+        $sum = getSumViewsFromUserFromDB($user, $conn);
+        $dataMostViewed = getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
             "game_id" => $id,
@@ -42,17 +42,17 @@
             "most_viewed_title" => $dataMostViewed["most_viewed_title"],
             "most_viewed_views" => $dataMostViewed["most_viewed_views"],
             "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
-            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"];
+            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
         );
 
-        $topsOfTheTops[] = $allData
+        $topsOfTheTops[] = $allData;
 
-        insertNewTopOfTheTops($conn, $allData)
+        insertNewTopOfTheTops($conn, $allData);
     }
     $json = json_encode($topsOfTheTops);
     header("Content-Type: application/json");
     echo $json;
 
-    closeConnectionDB($conn)
+    closeConnectionDB($conn);
         
 ?>

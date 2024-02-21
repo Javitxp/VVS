@@ -13,7 +13,7 @@
             die("Conexión fallida: " . $conn->connect_error);
         }
 
-        return $conn    
+        return $conn;    
     }
 
     function closeConnectionDB($conn){
@@ -21,7 +21,7 @@
     }
 
     function insertNewTopOfTheTops($conn, $new){
-        $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES ($new, ".time().")"
+        $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES ($new, ".time().")";
         if ($conn->query($sql) === TRUE) {
             error_log("Registro anadido en tops of the tops",0);
         } else {
@@ -36,8 +36,8 @@
     }
 
     function getTop3FromDB($conn){
-        $sql = "select * from Twitch_Entrega2;"
-        $result = $conn->query($sql)
+        $sql = "select * from Twitch_Entrega2;";
+        $result = $conn->query($sql);
         $data = array();
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()){
@@ -54,9 +54,9 @@
         // Ejecutar la sentencia SQL
         if ($conn->query($sql) === TRUE) {
             foreach($array as $entry){
-                $sql = "INSERT INTO Prueba (title,user,views,duracion,fecha_creacion) VALUES ('".$entry["title"]."','".$entry["user_name"]."',".$entry["view_count"].",'".$entry["duration"]."','".$entry["created_at"]."')"
+                $sql = "INSERT INTO Prueba (title,user,views,duracion,fecha_creacion) VALUES ('".$entry["title"]."','".$entry["user_name"]."',".$entry["view_count"].",'".$entry["duration"]."','".$entry["created_at"]."')";
                 if ($conn->query($sql) === TRUE) {
-                    error_log("Registro anadido",0)
+                    error_log("Registro anadido",0);
                 }else{
                     echo "Error al introducir registros: " . $conn->error;
                     closeConnectionAndExitDB();
@@ -72,11 +72,11 @@
         $sql = "SELECT user, COUNT(*) AS total_videos
         FROM Prueba
         WHERE user = '$user'
-        GROUP BY user;"
-        $result = $conn->query($sql)
+        GROUP BY user;";
+        $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc()
-            return $row["total_videos"]
+            $row = $result->fetch_assoc();
+            return $row["total_videos"];
         }else{
             return -1;
         }
@@ -86,11 +86,11 @@
         $sql = "SELECT user, SUM(views) AS total_views
         FROM Prueba
         WHERE user = '$user'
-        GROUP BY user;"
-        $result = $conn->query($sql)
+        GROUP BY user;";
+        $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc()
-            return $row["total_views"]
+            $row = $result->fetch_assoc();
+            return $row["total_views"];
         }else{
             return -1;
         }
@@ -100,17 +100,17 @@
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
         FROM Prueba
         WHERE user = '$user'
-        GROUP BY user;"
-        $result = $conn->query($sql)
+        GROUP BY user;";
+        $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc()
+            $row = $result->fetch_assoc();
             $data = array(
                 "most_viewed_title" => $row["title"],
                 "most_viewed_views" => $row["views_max"],
                 "most_viewed_duration" => $row["duracion"],
-                "most_viewed_created_at" => $row["fecha_creacion"];
+                "most_viewed_created_at" => $row["fecha_creacion"]
             );
-            return $data
+            return $data;
         }else{
             return -1;
         }
