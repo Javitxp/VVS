@@ -20,6 +20,16 @@
         $conn->close();
     }
 
+    function insertNewTopOfTheTops($conn, $new){
+        $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES ($new, ".time().")"
+        if ($conn->query($sql) === TRUE) {
+            error_log("Registro anadido en tops of the tops",0);
+        } else {
+            echo "Error al insertar el nuevo registro: " . $conn->error;
+            closeConnectionAndExitDB($conn);
+        }
+    }
+
     function closeConnectionAndExitDB($conn){
         $conn->close();
         exit(-1);
@@ -86,7 +96,7 @@
         }
     }
 
-    function getSumViewsFromUserFromDB($user, $conn){
+    function getMostViewedFromUserFromDB($user, $conn){
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
         FROM Prueba
         WHERE user = '$user'
@@ -100,7 +110,7 @@
                 "most_viewed_duration" => $row["duracion"],
                 "most_viewed_created_at" => $row["fecha_creacion"];
             );
-            return $row["total_views"]
+            return $data
         }else{
             return -1;
         }
