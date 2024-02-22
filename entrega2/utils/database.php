@@ -23,10 +23,9 @@
     function insertNewTopOfTheTops($conn, $new){
         try {
             $json_data = json_encode($new);
-            $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES (?, ?)";
+            $sql = "INSERT INTO Twitch_Entrega2 (Datos) VALUES (?)";
             $stmt = $conn->prepare($sql);
-            $current_time = time();
-            $stmt->bind_param("si", $json_data, $current_time);
+            $stmt->bind_param("s", $json_data);
             if ($stmt->execute()) {
                 error_log("Registro añadido en tops of the tops", 0);
             } else {
