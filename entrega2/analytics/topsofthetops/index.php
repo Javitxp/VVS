@@ -47,7 +47,7 @@
 
         $topsOfTheTops[] = $allData;
 
-        insertNewTopOfTheTops($conn, $allData);
+        insertNewTopOfTheTops($conn, json_encode($allData));
     }
     $json = json_encode($topsOfTheTops);
     header("Content-Type: application/json");
