@@ -53,20 +53,26 @@
 
         // Ejecutar la sentencia SQL
         if ($conn->query($sql) === TRUE) {
+
             foreach($array as $entry){
-                try{
-                    $sql = "INSERT INTO Prueba (title,user,views,duracion,fecha_creacion) VALUES ('".$entry["title"]."','".$entry["user_name"]."',".$entry["view_count"].",'".$entry["duration"]."','".$entry["created_at"]."')";
-                    if ($conn->query($sql) === TRUE) {
-                        error_log("Registro anadido",0);
-                    }else{
-                        echo "Error al introducir registros: " . $conn->error;
+                try {
+                    $sql = "INSERT INTO Prueba (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssiss", $entry["title"], $entry["user_name"], $entry["view_count"], $entry["duration"], $entry["created_at"]);
+                    $stmt->execute();
+                    if ($stmt->affected_rows > 0) {
+                        error_log("Registro añadido", 0);
+                    } else {
+                        echo "Error al introducir registros.";
                         closeConnectionAndExitDB();
                     }
-                }catch(Exception $e){
-                    print_r($entry["title"]);
+
+                    $stmt->close();
+                } catch (Exception $e) {
                     echo "Excepción capturada: " . $e->getMessage();
                     echo "<br>";
                 }
+
             }
         } else {
             echo "Error al eliminar registros: " . $conn->error;
