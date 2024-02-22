@@ -34,8 +34,6 @@
             }
             $stmt->close();
         } catch (Exception $e) {
-            echo "Excepción capturada: " . $e->getMessage();
-            echo "<br>";
         }
     }
 
@@ -78,8 +76,6 @@
 
                     $stmt->close();
                 } catch (Exception $e) {
-                    echo "Excepción capturada: " . $e->getMessage();
-                    echo "<br>";
                 }
 
             }
