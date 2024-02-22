@@ -54,12 +54,18 @@
         // Ejecutar la sentencia SQL
         if ($conn->query($sql) === TRUE) {
             foreach($array as $entry){
-                $sql = "INSERT INTO Prueba (title,user,views,duracion,fecha_creacion) VALUES ('".$entry["title"]."','".$entry["user_name"]."',".$entry["view_count"].",'".$entry["duration"]."','".$entry["created_at"]."')";
-                if ($conn->query($sql) === TRUE) {
-                    error_log("Registro anadido",0);
-                }else{
-                    echo "Error al introducir registros: " . $conn->error;
-                    closeConnectionAndExitDB();
+                try{
+                    $sql = "INSERT INTO Prueba (title,user,views,duracion,fecha_creacion) VALUES ('".$entry["title"]."','".$entry["user_name"]."',".$entry["view_count"].",'".$entry["duration"]."','".$entry["created_at"]."')";
+                    if ($conn->query($sql) === TRUE) {
+                        error_log("Registro anadido",0);
+                    }else{
+                        echo "Error al introducir registros: " . $conn->error;
+                        closeConnectionAndExitDB();
+                    }
+                }catch(Exception $e){
+                    print_r($entry["title"]);
+                    echo "Excepción capturada: " . $e->getMessage();
+                    echo "<br>";
                 }
             }
         } else {
