@@ -21,12 +21,22 @@
     }
 
     function insertNewTopOfTheTops($conn, $new){
-        $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES ($new, ".time().")";
-        if ($conn->query($sql) === TRUE) {
-            error_log("Registro anadido en tops of the tops",0);
-        } else {
-            echo "Error al insertar el nuevo registro: " . $conn->error;
-            closeConnectionAndExitDB($conn);
+        try {
+            $json_data = json_encode($new);
+            $sql = "INSERT INTO Twitch_Entrega2 (Datos, Tiempo) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql);
+            $current_time = time();
+            $stmt->bind_param("si", $json_data, $current_time);
+            if ($stmt->execute()) {
+                error_log("Registro añadido en tops of the tops", 0);
+            } else {
+                echo "Error al insertar el nuevo registro: " . $stmt->error;
+                closeConnectionAndExitDB($conn);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            echo "Excepción capturada: " . $e->getMessage();
+            echo "<br>";
         }
     }
 
