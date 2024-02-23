@@ -136,4 +136,17 @@
             return -1;
         }
     }
+
+    function getLast10MinTopOfTheTops(){
+        $conn = connectToDB();
+        $sql = "SELECT * FROM Twitch_Entrega2 WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 LIMIT 1;";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return json_decode($row["Datos"]);
+        }else{
+            return null;
+        }
+    }
+
 ?>

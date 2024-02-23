@@ -8,7 +8,10 @@
         exit(-1);
     }
 
-    $json = getAndInsertTopOfTheTops();
+    $json = getLast10MinTopOfTheTops();
+    if($json === null){
+        $json = getAndInsertTopOfTheTops();
+    }
     header("Content-Type: application/json");
     echo $json;
         
