@@ -21,13 +21,13 @@
     }
 
     function insertNewTopOfTheTops($conn, $new){
-        $sql = "DELETE FROM Twitch_Entrega2";
+        $sql = "DELETE FROM Presentar";
         if ($conn->query($sql) !== TRUE) {
             closeConnectionAndExitDB($conn);
         }
         try {
             $json_data = json_encode($new);
-            $sql = "INSERT INTO Twitch_Entrega2 (Datos) VALUES (?)";
+            $sql = "INSERT INTO Presentar (Datos) VALUES (?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("s", $json_data);
             if ($stmt->execute()) {
@@ -47,7 +47,7 @@
     }
 
     function getTop3FromDB($conn){
-        $sql = "select * from Twitch_Entrega2;";
+        $sql = "select * from Presentar;";
         $result = $conn->query($sql);
         $data = array();
         if ($result->num_rows > 0) {
@@ -60,14 +60,14 @@
 
     function setNew40GamesInDB($array, $conn){
         //Primero eliminamos los ultimos 40 registros para meter los del siguiente juego
-        $sql = "DELETE FROM Prueba";
+        $sql = "DELETE FROM Datos";
 
         // Ejecutar la sentencia SQL
         if ($conn->query($sql) === TRUE) {
 
             foreach($array as $entry){
                 try {
-                    $sql = "INSERT INTO Prueba (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO Datos (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("ssiss", $entry["title"], $entry["user_name"], $entry["view_count"], $entry["duration"], $entry["created_at"]);
                     $stmt->execute();
@@ -91,7 +91,7 @@
 
     function getVideosFromUserFromDB($user, $conn){
         $sql = "SELECT user, COUNT(*) AS total_videos
-        FROM Prueba
+        FROM Datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -105,7 +105,7 @@
 
     function getSumViewsFromUserFromDB($user, $conn){
         $sql = "SELECT user, SUM(views) AS total_views
-        FROM Prueba
+        FROM Datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -119,7 +119,7 @@
 
     function getMostViewedFromUserFromDB($user, $conn){
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
-        FROM Prueba
+        FROM Datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -139,7 +139,7 @@
 
     function getLast10MinTopOfTheTops(){
         $conn = connectToDB();
-        $sql = "SELECT * FROM Twitch_Entrega2 WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 LIMIT 1;";
+        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 LIMIT 1;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -151,7 +151,7 @@
 
     function getSinceTopOfTheTops($seconds){
         $conn = connectToDB();
-        $sql = "SELECT * FROM Twitch_Entrega2 WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? LIMIT 1;";
+        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? LIMIT 1;";
         $statement = $conn->prepare($sql);
         $statement->bind_param("i", $seconds);
         $statement->execute();
