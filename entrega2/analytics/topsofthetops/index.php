@@ -1,7 +1,6 @@
 <?php
 
-    include "../../utils/getTop3Games.php";
-    include "../../utils/getTop40Videos.php";
+    include "../../utils/api.php";
     include "../../utils/database.php";
 
     // Verificar si se recibió una solicitud GET
