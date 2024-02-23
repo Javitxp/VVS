@@ -46,18 +46,6 @@
         exit(-1);
     }
 
-    function getTop3FromDB($conn){
-        $sql = "select * from Presentar;";
-        $result = $conn->query($sql);
-        $data = array();
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()){
-                $data[] = $row;
-            }
-        }
-        return $data;
-    }
-
     function setNew40GamesInDB($array, $conn){
         //Primero eliminamos los ultimos 40 registros para meter los del siguiente juego
         $sql = "DELETE FROM Datos";
