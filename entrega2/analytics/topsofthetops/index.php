@@ -8,10 +8,12 @@
         exit(-1);
     }
 
-    $json = getLast10MinTopOfTheTops();
+    $json = isset($_GET["since"]) ? getSinceTopOfTheTops($_GET["since"]) : getLast10MinTopOfTheTops();
+
     if($json === null){
         $json = getAndInsertTopOfTheTops();
     }
+
     header("Content-Type: application/json");
     echo $json;
         

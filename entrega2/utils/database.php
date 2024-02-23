@@ -149,4 +149,19 @@
         }
     }
 
+    function getSinceTopOfTheTops($seconds){
+        $conn = connectToDB();
+        $sql = "SELECT * FROM Twitch_Entrega2 WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? LIMIT 1;";
+        $statement = $conn->prepare($sql);
+        $statement->bind_param("i", $seconds);
+        $statement->execute();
+        $result = $statement->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return json_decode($row["Datos"]);
+        } else {
+            return null;
+        }
+    }
+
 ?>
