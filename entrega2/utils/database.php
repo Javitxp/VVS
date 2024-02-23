@@ -21,6 +21,10 @@
     }
 
     function insertNewTopOfTheTops($conn, $new){
+        $sql = "DELETE FROM Twitch_Entrega2";
+        if ($conn->query($sql) !== TRUE) {
+            closeConnectionAndExitDB($conn);
+        }
         try {
             $json_data = json_encode($new);
             $sql = "INSERT INTO Twitch_Entrega2 (Datos) VALUES (?)";
@@ -71,7 +75,7 @@
                         error_log("Registro añadido", 0);
                     } else {
                         echo "Error al introducir registros.";
-                        closeConnectionAndExitDB();
+                        closeConnectionAndExitDB($conn);
                     }
 
                     $stmt->close();
@@ -81,7 +85,7 @@
             }
         } else {
             echo "Error al eliminar registros: " . $conn->error;
-            closeConnectionAndExitDB();
+            closeConnectionAndExitDB($conn);
         }
     }
 
