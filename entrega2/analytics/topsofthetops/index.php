@@ -12,12 +12,8 @@
 
     $top3_games = getTop3Games();
 
-    if($json === null){
+    if($json === null || !areIDSEqual($json)){
         $json = getAndInsertTopOfTheTops();
-    }
-
-    if(!areIDSEqual($json)){
-        $json = selectGamesInOurTop($json);
     }
 
     header("Content-Type: application/json");
