@@ -20,16 +20,12 @@
         $conn->close();
     }
 
-    function insertNewTopOfTheTops($conn, $new){
-        $sql = "DELETE FROM Presentar";
-        if ($conn->query($sql) !== TRUE) {
-            closeConnectionAndExitDB($conn);
-        }
+    function insertNewGame($conn, $new){
         try {
             $json_data = json_encode($new);
-            $sql = "INSERT INTO Presentar (Datos) VALUES (?)";
+            $sql = "INSERT INTO Presentar (ID, Datos) VALUES (?,?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $json_data);
+            $stmt->bind_param("is", $new["game_id"],$json_data);
             if ($stmt->execute()) {
                 error_log("Registro añadido en tops of the tops", 0);
             } else {

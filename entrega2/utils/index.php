@@ -2,26 +2,15 @@
     include "api.php";
     include "database.php";
 
-    function getAndInsertTopOfTheTops(){
+    function getAndInsertGame($id){
         $conn = connectToDB();
-        $top3_games = getTop3Games();
-        if ($top3_games === null) {
-            echo "Error al obtener top 3 juegos";
-            exit(-1);
-        }
-        $topsOfTheTops = [];
-        foreach ($top3_games as $game) {
-            $id = $game["id"];
-            $name = $game["name"];
-            $array = getTop40Videos($id);
-
-            $topUser = $array[0];
-            $user = $topUser["user_name"];
-            setNew40GamesInDB($array, $conn);
-
-            $totalVideos = getVideosFromUserFromDB($user, $conn);
-            $sum = getSumViewsFromUserFromDB($user, $conn);
-            $dataMostViewed = getMostViewedFromUserFromDB($user, $conn);
+        $array = getTop40Videos($id);
+        $topUser = $array[0];
+        $user = $topUser["user_name"];
+        setNew40GamesInDB($array, $conn);
+        $totalVideos = getVideosFromUserFromDB($user, $conn);
+        $sum = getSumViewsFromUserFromDB($user, $conn);
+        $dataMostViewed = getMostViewedFromUserFromDB($user, $conn);
 
             $allData = array(
                 "game_id" => $id,
@@ -34,13 +23,9 @@
                 "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
                 "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
             );
-
-            $topsOfTheTops[] = $allData;
-        }
-
-        insertNewTopOfTheTops($conn, json_encode($topsOfTheTops));
+        insertNewGame($conn, $allData);
         closeConnectionDB($conn);
-        return json_encode($topsOfTheTops);
+        return json_encode($allData);
     }
 
 ?>
