@@ -19,25 +19,15 @@
             $id = $game["id"];
             $name = $game["name"];
 
-            // CHECK SI ESTA EN PRESENTAR CON ID
             $result = checkGameId($id);
-
-            // ESTA EN PRESENTAR
             if($result){
-                // REVISAR TIMESTAMP
-                // SI HAY SINCE
-                    // COMPARAR SINCE CON TIMESTAMP
-                // NO HAY SINCE
-                    // COMPARAR 10MIN CON TIMESTAMP  
                 $json = isset($_GET["since"]) ? getSince($_GET["since"],$id) : getLast10($id);
                 if($json === null){
-                    //$json = getAndInsertGame($id);
                     $json = updateGame($id,$name);
                 }
+                $topsOfTheTops[] = $json;
             }
-            // NO ESTA EN PRESENTAR
             else{
-                // OBTENER TODA LA DATA DEL JUEGO
                 $json = getAndInsertGame($id,$name);
                 $topsOfTheTops[] = $json;
             }

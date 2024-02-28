@@ -34,16 +34,9 @@
             $sql = "DELETE FROM Presentar WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $id);
-            if ($stmt->execute()) {
-                echo "La fila se eliminó correctamente.";
-            } else {
-                echo "Error al eliminar la fila: " . $stmt->error;
-            }
+            $stmt->execute();
             $stmt->close();
-        } catch (Exception $e) {
-            echo "Error al eliminar la fila: " . $e->getMessage();
-        }
-
+        } catch (Exception $e) {return;}
         $array = getTop40Videos($id);
         $topUser = $array[0];
         $user = $topUser["user_name"];
