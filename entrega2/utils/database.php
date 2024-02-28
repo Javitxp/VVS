@@ -151,4 +151,22 @@
         }
     }
 
+    function checkGameId($id) {
+        $conn = connectToDB();
+        try {
+            $sql = "SELECT COUNT(*) FROM Presentar WHERE ID = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->bind_result($count);
+            $stmt->fetch();
+            $stmt->close();
+            
+            return $count > 0;
+        } catch (Exception $e) {
+            echo "Error al verificar el ID del juego: " . $e->getMessage();
+            return false;
+        }
+    }
+
 ?>

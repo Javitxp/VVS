@@ -8,19 +8,12 @@
         exit(-1);
     }
 
-    /*$json = isset($_GET["since"]) ? getSinceTopOfTheTops($_GET["since"]) : getLast10MinTopOfTheTops();
-
-    if($json === null){
-        $json = getAndInsertTopOfTheTops();
-    }
-    */
-
-    $conn = connectToDB();
         $top3_games = getTop3Games();
         if ($top3_games === null) {
             echo "Error al obtener top 3 juegos";
             exit(-1);
         }
+
         $topsOfTheTops = [];
         foreach ($top3_games as $game) {
             $id = $game["id"];
@@ -39,17 +32,18 @@
                 $json = isset($_GET["since"]) ? getSince($_GET["since"],$id) : getLast10($id);
                 if($json === null){
                     //$json = getAndInsertGame($id);
-                    $json = updateGame($id);
+                    $json = updateGame($id,$name);
                 }
             }
             // NO ESTA EN PRESENTAR
             else{
                 // OBTENER TODA LA DATA DEL JUEGO
-                $json = getAndInsertGame($id);
+                $json = getAndInsertGame($id,$name);
+                $topsOfTheTops[] = $json;
             }
         }
 
     header("Content-Type: application/json");
-    echo $json;
+    echo json_encode($topsOfTheTops);
         
 ?>
