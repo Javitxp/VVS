@@ -46,7 +46,8 @@
     function areIDSEqual($json){
         $top3_games = getTop3Games();
         $bool = false;
-        if($top3_games[0]["id"] == $json[0]["game_id"] && $top3_games[1]["id"] == $json[1]["game_id"] && $top3_games[2]["id"] == $json[2]["game_id"]){
+        $jsonArray = json_decode($json, true);
+        if($top3_games[0]["id"] == $jsonArray[0]["game_id"] && $top3_games[1]["id"] == $jsonArray[1]["game_id"] && $top3_games[2]["id"] == $jsonArray[2]["game_id"]){
             $bool = true;
         }
         return $bool;
@@ -55,9 +56,10 @@
     function selectGamesInOurTop($json){
         $top3_games = getTop3Games();
         $newJson = array();
+        $jsonArray = json_decode($json, true);
         for($i = 0; $i < 3; $i++){
-            if($json[$i]["id"] == $top3_games[$i]["game_id"]){
-                $newJson[] = $json[$i];
+            if($jsonArray[$i]["id"] == $top3_games[$i]["game_id"]){
+                $newJson[] = $jsonArray[$i];
             }
         }
         return $newJson;
