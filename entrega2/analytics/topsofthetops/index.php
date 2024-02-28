@@ -10,8 +10,14 @@
 
     $json = isset($_GET["since"]) ? getSinceTopOfTheTops($_GET["since"]) : getLast10MinTopOfTheTops();
 
+    $top3_games = getTop3Games();
+
     if($json === null){
         $json = getAndInsertTopOfTheTops();
+    }
+
+    if(!areIDSEqual($json)){
+        $json = selectGamesInOurTop($json);
     }
 
     header("Content-Type: application/json");
