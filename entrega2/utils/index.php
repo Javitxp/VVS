@@ -62,7 +62,7 @@
                 $newJson[] = $jsonArray[$i];
             }
         }
-        return $newJson;
+        return json_encode($newJson);
     }
 
 ?>
