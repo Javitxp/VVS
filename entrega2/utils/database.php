@@ -125,23 +125,26 @@
         }
     }
 
-    function getLast10MinTopOfTheTops(){
+    function getLast10($id) {
         $conn = connectToDB();
-        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 LIMIT 1;";
-        $result = $conn->query($sql);
+        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
+        $statement = $conn->prepare($sql);
+        $statement->bind_param("i", $id);
+        $statement->execute();
+        $result = $statement->get_result();
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return json_decode($row["Datos"]);
-        }else{
+        } else {
             return null;
         }
-    }
+    }    
 
-    function getSinceTopOfTheTops($seconds){
+    function getSince($seconds, $id) {
         $conn = connectToDB();
-        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? LIMIT 1;";
+        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
-        $statement->bind_param("i", $seconds);
+        $statement->bind_param("ii", $seconds, $id);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
