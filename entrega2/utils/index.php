@@ -58,7 +58,7 @@
         $newJson = array();
         $jsonArray = json_decode($json, true);
         for($i = 0; $i < 3; $i++){
-            if($jsonArray[$i]["id"] == $top3_games[$i]["game_id"]){
+            if($jsonArray[$i]["game_id"] == $top3_games[$i]["id"]){
                 $newJson[] = $jsonArray[$i];
             }
         }
