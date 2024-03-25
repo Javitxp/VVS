@@ -63,10 +63,10 @@ Route::get('/analytics/streams', function () {
     }
 
     curl_close($curl);
-    return $data;
+    echo $data;
 });
 
-Route::get('analytics/users/{id}', function ($id){
+Route::get('analytics/users', function (){
     // Verificar si se recibió una solicitud GET
     if ($_SERVER['REQUEST_METHOD'] != 'GET') {
         http_response_code(405);
@@ -74,13 +74,15 @@ Route::get('analytics/users/{id}', function ($id){
         exit(-1);
     }
 
-// Verificar si hay parámetro id
+    // Verificar si se proporcionó el parámetro id
+    $id = $_GET['id'] ?? null; // Usar el operador de fusión de null para asignar null si 'id' no está presente
+
     if (!isset($id)) {
         echo "Parameter id required";
         exit(-1);
     }
 
-//Configurar url y autorizacion y client-id en header
+    // Configurar la URL y la autorización en el encabezado
     $url = 'https://api.twitch.tv/helix/users?id='.$id;
 
     $headers = array(
@@ -88,7 +90,7 @@ Route::get('analytics/users/{id}', function ($id){
         'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87'
     );
 
-//Configurar curl
+    // Configurar curl
     $curl = curl_init();
 
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -105,20 +107,19 @@ Route::get('analytics/users/{id}', function ($id){
         $obj = json_decode($response, true);
         $array = $obj["data"];
         if($array == null || count($array) == 0){
-            echo "There is no user with id: ".$_GET["id"];
+            echo "There is no user with id: ".$id;
             exit(-1);
         }
         $json = json_encode($array[0]);
         header("Content-Type: application/json");
-        $data = $json;
-
+        echo $json;
     }
 
     curl_close($curl);
-    return $data;
 });
 
-Route::get('analytics/topsofthetops/{since}', function ($since){
+
+Route::get('analytics/topsofthetops', function (){
     $apiController = new ApiController();
     $dbController = new DatabaseController();
     if ($_SERVER['REQUEST_METHOD'] != 'GET') {
@@ -132,6 +133,8 @@ Route::get('analytics/topsofthetops/{since}', function ($since){
         echo "Error al obtener top 3 juegos";
         exit(-1);
     }
+
+    $since = $_GET['since'] ?? null;
 
     $topsOfTheTops = [];
     foreach ($top3_games as $game) {
@@ -153,6 +156,6 @@ Route::get('analytics/topsofthetops/{since}', function ($since){
     }
 
     header("Content-Type: application/json");
-    return json_encode($topsOfTheTops);
+    echo json_encode($topsOfTheTops);
 });
 
