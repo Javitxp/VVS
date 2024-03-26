@@ -35,10 +35,8 @@ grumphp:
             rules: 
                 '@PSR2': true
                 line_ending: false
-                array_syntax:
-                    syntax: short
             using_cache: ~
-            config_contains_finder: true
+            config_contains_finder: false
             verbose: true
             diff: false
             triggered_by: ['php']
