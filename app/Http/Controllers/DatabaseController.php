@@ -11,10 +11,10 @@ use App\Http\Controllers\ApiController;
 class DatabaseController extends Controller
 {
     function connectToDB(){
-        $servername = "localhost";
-        $username = "id21862115_los_parseros";
-        $password = "P4rs3r0s*";
-        $database = "id21862115_twitch";
+        $servername = env("DB_HOST");
+        $username = env("DB_USERNAME");
+        $password = env("DB_PASSWORD");
+        $database = env("DB_DATABASE");
 
         // Crear conexión
         $conn = new mysqli($servername, $username, $password, $database);
