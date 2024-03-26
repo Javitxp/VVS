@@ -156,7 +156,9 @@ Route::get('analytics/topsofthetops', function (){
         }
     }
 
-    header("Content-Type: application/json");
-    echo json_encode($topsOfTheTops);
+    $data = json_encode($topsOfTheTops);
+    return response($data,200)
+            ->header("Content-Type","application/json");
+
 });
 
