@@ -63,7 +63,8 @@ Route::get('/analytics/streams', function () {
     }
 
     curl_close($curl);
-    echo $data;
+    return response($data,200)
+            ->header("Content-Type","application/json");
 });
 
 Route::get('analytics/users', function (){
@@ -111,8 +112,8 @@ Route::get('analytics/users', function (){
             exit(-1);
         }
         $json = json_encode($array[0]);
-        header("Content-Type: application/json");
-        echo $json;
+        return response($json,200)
+                ->header("Content-Type","application/json");
     }
 
     curl_close($curl);
