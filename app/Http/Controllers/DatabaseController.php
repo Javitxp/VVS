@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Exception;
 use mysqli;
 
-use App\Http\Controllers\ApiController;
-
+use App\Services\ApiController;
 
 class DatabaseController extends Controller
 {
-    function connectToDB(){
+    public function connectToDB()
+    {
         $servername = env("DB_HOST");
         $username = env("DB_USERNAME");
         $password = env("DB_PASSWORD");
@@ -27,16 +27,18 @@ class DatabaseController extends Controller
         return $conn;
     }
 
-    function closeConnectionDB($conn){
+    public function closeConnectionDB($conn)
+    {
         $conn->close();
     }
 
-    function insertNewGame($conn, $new){
+    public function insertNewGame($conn, $new)
+    {
         try {
             $json_data = json_encode($new);
             $sql = "INSERT INTO Presentar (ID, Datos) VALUES (?,?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("is", $new["game_id"],$json_data);
+            $stmt->bind_param("is", $new["game_id"], $json_data);
             if ($stmt->execute()) {
                 error_log("Registro añadido en tops of the tops", 0);
             } else {
@@ -48,19 +50,21 @@ class DatabaseController extends Controller
         }
     }
 
-    function closeConnectionAndExitDB($conn){
+    public function closeConnectionAndExitDB($conn)
+    {
         $conn->close();
         exit(-1);
     }
 
-    function setNew40GamesInDB($array, $conn){
+    public function setNew40GamesInDB($array, $conn)
+    {
         //Primero eliminamos los ultimos 40 registros para meter los del siguiente juego
         $sql = "DELETE FROM Datos";
 
         // Ejecutar la sentencia SQL
-        if ($conn->query($sql) === TRUE) {
+        if ($conn->query($sql) === true) {
 
-            foreach($array as $entry){
+            foreach($array as $entry) {
                 try {
                     $sql = "INSERT INTO Datos (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
@@ -84,7 +88,8 @@ class DatabaseController extends Controller
         }
     }
 
-    function getVideosFromUserFromDB($user, $conn){
+    public function getVideosFromUserFromDB($user, $conn)
+    {
         $sql = "SELECT user, COUNT(*) AS total_videos
         FROM Datos
         WHERE user = '$user'
@@ -93,12 +98,13 @@ class DatabaseController extends Controller
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row["total_videos"];
-        }else{
+        } else {
             return -1;
         }
     }
 
-    function getSumViewsFromUserFromDB($user, $conn){
+    public function getSumViewsFromUserFromDB($user, $conn)
+    {
         $sql = "SELECT user, SUM(views) AS total_views
         FROM Datos
         WHERE user = '$user'
@@ -107,12 +113,13 @@ class DatabaseController extends Controller
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row["total_views"];
-        }else{
+        } else {
             return -1;
         }
     }
 
-    function getMostViewedFromUserFromDB($user, $conn){
+    public function getMostViewedFromUserFromDB($user, $conn)
+    {
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
         FROM Datos
         WHERE user = '$user'
@@ -127,12 +134,13 @@ class DatabaseController extends Controller
                 "most_viewed_created_at" => $row["fecha_creacion"]
             );
             return $data;
-        }else{
+        } else {
             return -1;
         }
     }
 
-    function getLast10($id) {
+    public function getLast10($id)
+    {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
@@ -147,7 +155,8 @@ class DatabaseController extends Controller
         }
     }
 
-    function getSince($seconds, $id) {
+    public function getSince($seconds, $id)
+    {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
@@ -162,7 +171,8 @@ class DatabaseController extends Controller
         }
     }
 
-    function checkGameId($id) {
+    public function checkGameId($id)
+    {
         $conn = $this->connectToDB();
         try {
             $sql = "SELECT COUNT(*) FROM Presentar WHERE ID = ?";
@@ -180,7 +190,8 @@ class DatabaseController extends Controller
         }
     }
 
-    function getAndInsertGame($id,$name){
+    public function getAndInsertGame($id, $name)
+    {
         $apiController = new ApiController();
         $conn = $this->connectToDB();
         $array = $apiController->getTop40Videos($id);
@@ -207,7 +218,8 @@ class DatabaseController extends Controller
         return $allData;
     }
 
-    function updateGame($id,$name){
+    public function updateGame($id, $name)
+    {
         $apiController = new ApiController();
         $conn = $this->connectToDB();
         try {
@@ -216,7 +228,9 @@ class DatabaseController extends Controller
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $stmt->close();
-        } catch (Exception $e) {return;}
+        } catch (Exception $e) {
+            return;
+        }
         $array = $apiController->getTop40Videos($id);
         $topUser = $array[0];
         $user = $topUser["user_name"];
