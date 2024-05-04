@@ -19,7 +19,7 @@ class StreamsController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function getStreams(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         return $this->apiTwitch->getStreams($request);
     }
