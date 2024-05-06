@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Clients;
 
+
+use App\Infrastructure\Controllers\ApiController;
 use Exception;
 use mysqli;
 
-use App\Services\ApiController;
-
-class DatabaseController extends Controller
+class DBClient
 {
     public function connectToDB()
     {

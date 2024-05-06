@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Controllers;
 
-use App\Services\ApiTwitch;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Services\ApiTwitch;
 
-class StreamsController extends Controller
+class UsersController extends Controller
 {
     protected $apiTwitch;
 
@@ -17,10 +16,10 @@ class StreamsController extends Controller
     }
 
     /**
-     * Handle the incoming request.
+     * Handle the incoming request
      */
     public function __invoke(Request $request): JsonResponse
     {
-        return $this->apiTwitch->getStreams($request);
+        return $this->apiTwitch->getUsers($request);
     }
 }

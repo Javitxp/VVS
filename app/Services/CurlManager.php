@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Infrastructure\Clients\ApiClient;
+
 class CurlManager
 {
     private $token;

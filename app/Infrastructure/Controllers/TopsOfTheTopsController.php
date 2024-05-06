@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Controllers;
 
 use App\Services\ApiTwitch;
 use Illuminate\Http\JsonResponse;

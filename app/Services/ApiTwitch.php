@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\DatabaseController;
-use Illuminate\Http\Request;
+use App\Infrastructure\Clients\DBClient;
+use App\Infrastructure\Controllers\ApiController;
+use App\Infrastructure\Clients\ApiClient;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-require_once __DIR__ . '/../Http/Controllers/ApiController.php';
-require_once __DIR__ . '/../Http/Controllers/DatabaseController.php';
+require_once __DIR__ . '/../Infrastructure/Controllers/ApiController.php';
+require_once __DIR__ . '/../Infrastructure/Controllers/DBClient.php';
 
 
 
@@ -109,7 +110,7 @@ class ApiTwitch
             $name = $game["name"];
 
             // Verificar si el juego existe en la base de datos
-            $databaseController = new DatabaseController();
+            $databaseController = new DBClient();
             $result = $databaseController->checkGameId($id);
             if ($result) {
                 // Obtener datos según el parámetro 'since' si está presente, de lo contrario, obtener los últimos 10 registros
