@@ -1,9 +1,9 @@
 <?php
 
 
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\StreamsController;
-use App\Http\Controllers\TopsOfTheTopsController;
+use App\Infrastructure\Controllers\UsersController;
+use App\Infrastructure\Controllers\StreamsController;
+use App\Infrastructure\Controllers\TopsOfTheTopsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
