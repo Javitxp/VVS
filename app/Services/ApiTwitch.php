@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 require_once __DIR__ . '/../Infrastructure/Controllers/ApiController.php';
-require_once __DIR__ . '/../Infrastructure/Controllers/DBClient.php';
+require_once __DIR__ . '/../Infrastructure/Clients/DBClient.php';
 
 
 
@@ -34,8 +34,8 @@ class ApiTwitch
         $apiClient = new ApiClient();
 
         $headers = [
-            'Authorization' => 'Bearer sga6x1z0df1pq1mskps75mjmhwa3p4',
-            'Client-Id' => $apiClient->getToken()
+            'Authorization' => 'Bearer ' . $apiClient->getToken(),
+            'Client-Id' => env("CLIENT_ID")
         ];
 
         // Realizar la solicitud HTTP

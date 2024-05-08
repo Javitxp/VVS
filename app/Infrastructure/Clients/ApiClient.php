@@ -4,14 +4,13 @@ namespace App\Infrastructure\Clients;
 
 class ApiClient
 {
-    private const CLIENT_ID = 'rxbua83lt6p4yqdig92dvsoicmdi87';
-    private const CLIENT_SECRET = '';
+    private const CLIENT_SECRET = 'i133qcoopm5wy8enea8df8tugvo07j';
 
     public function getToken(): String
     {
         $url = 'https://id.twitch.tv/oauth2/token';
         $data = array(
-            'client_id' => self::CLIENT_ID,
+            'client_id' => env("CLIENT_ID"),
             'client_secret' => self::CLIENT_SECRET,
             'grant_type' => 'client_credentials'
         );
@@ -31,7 +30,15 @@ class ApiClient
         }
 
         curl_close($curlHeaders);
-        return $response;
+
+        $jsonResponse = json_decode($response, true);
+
+        if (isset($jsonResponse['access_token'])) {
+            return $jsonResponse['access_token'];
+        } else {
+            echo "No se pudo encontrar el access_token en la respuesta.";
+            exit;
+        }
     }
 
     public function makeCurlCall($url, $headers): String
