@@ -20,6 +20,7 @@ class UsersController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-        return $this->apiTwitch->getUsers($request);
+        return ($this->apiTwitch->getUsers($request)) ;
+
     }
 }

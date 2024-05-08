@@ -48,7 +48,7 @@ class ApiTwitch
             // Verificar si hay datos disponibles
             if (isset($user_data['data']) && count($user_data['data']) > 0) {
                 // Devolver la información del usuario en formato JSON
-                return response()->json($user_data['data'][0]);
+                return response()->json($user_data['data'][0], 200, [], JSON_PRETTY_PRINT);
             } else {
                 return response()->json(['message' => 'There is no user with id: ' . $request->input('id')], 404);
             }
@@ -65,8 +65,8 @@ class ApiTwitch
         $apiClient = new ApiClient();
 
         $headers = [
-            'Authorization' => 'Bearer sga6x1z0df1pq1mskps75mjmhwa3p4',
-            'Client-Id' => $apiClient->getToken()
+            'Authorization' => 'Bearer '.$apiClient->getToken(),
+            'Client-Id' => env("CLIENT_ID")
         ];
 
         // Realizar la solicitud HTTP
@@ -87,7 +87,7 @@ class ApiTwitch
                 });
 
                 // Devolver la información en formato JSON
-                return response()->json($stream_info);
+                return response()->json($stream_info, 200, [], JSON_PRETTY_PRINT);
             } else {
                 return response()->json(['message' => 'No se encontraron datos de streams.'], 404);
             }
