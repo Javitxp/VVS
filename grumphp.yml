@@ -30,15 +30,9 @@ grumphp:
                 Formato debe ser [N_ISSUE] - MENSAJE: /(\[\d+\] - .+)/
         phpcsfixer:
             allow_risky: false
-            cache_file: ~
-            config: ~
-            rules: 
-                '@PSR2': true
-                line_ending: false
-            using_cache: ~
-            config_contains_finder: false
             verbose: true
-            diff: false
             triggered_by: ['php']
+            config_file: .php_cs.dist
+
     testsuites: []
     extensions: []
