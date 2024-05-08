@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Services\ApiTwitch;
+use App\Services\StreamsDataManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -11,9 +12,11 @@ class StreamsController extends Controller
 {
     protected $apiTwitch;
 
-    public function __construct(ApiTwitch $apiTwitch)
+    private $streamsDataManager;
+
+    public function __construct(StreamsDataManager $streamsDataManager)
     {
-        $this->apiTwitch = $apiTwitch;
+        $this->streamsDataManager = $streamsDataManager;
     }
 
     /**
