@@ -31,8 +31,9 @@ grumphp:
         phpcsfixer:
             allow_risky: false
             verbose: true
-            triggered_by: ['php']
             config: .php_cs.dist
+            triggered_by: ['php']
+            
 
     testsuites: []
     extensions: []
