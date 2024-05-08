@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Http;
 
 class StreamsController extends Controller
 {
-    protected $apiTwitch;
 
     private $streamsDataManager;
 
@@ -22,8 +21,8 @@ class StreamsController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(): JsonResponse
     {
-        return $this->apiTwitch->getStreams($request);
+        return response()->json($this->streamsDataManager->getStreams());
     }
 }
