@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Infrastructure\Clients\ApiClient;
+use App\Infrastructure\Clients\DBClient;
 
 
 class TokenProvider
@@ -16,7 +17,13 @@ class TokenProvider
 
     public function getToken()
     {
-        // TODO: Revisar si el token esta en la base de datos
-        return $this->apiClient->getToken();
+        $dbClient = new DBClient();
+        $token = $dbClient->getToken();
+        if($token != null){
+            return $token;
+        }
+        $token = $this->apiClient->getToken();
+        // TODO: Meter token en la DB
+        return $token;
     }
 }

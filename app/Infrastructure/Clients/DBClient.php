@@ -255,4 +255,21 @@ class DBClient
         return $allData;
     }
 
+    public function getToken()
+    {
+        // TODO: Comprobar que funciona
+        echo "Ejecutando getToken:";
+        $conn = $this->connectToDB();
+        $sql = "SELECT value FROM token;";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            echo "Aqui la row:";
+            print_r($row);
+            return $row["value"];
+        } else {
+            return null;
+        }
+    }
+
 }
