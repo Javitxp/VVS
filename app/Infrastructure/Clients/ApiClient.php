@@ -45,11 +45,11 @@ class ApiClient
     {
         $curlHeaders = curl_init();
 
-        $headers[] = 'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87';
+        $headers[] = 'Client-Id: ' . env("CLIENT_ID");
 
         curl_setopt($curlHeaders, CURLOPT_URL, $url);
         curl_setopt($curlHeaders, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlHeaders, CURLOPT_HTTPHEADER, array("Content-Type: application/x-www-form-urlencoded"));
+        curl_setopt($curlHeaders, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($curlHeaders);
         $http_status = curl_getinfo($curlHeaders, CURLINFO_HTTP_CODE);

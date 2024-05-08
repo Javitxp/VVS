@@ -22,7 +22,8 @@ class UserDataProvider
         $headers = array('Authorization: Bearer '.$this->apiClient->getToken());
         $url = 'https://api.twitch.tv/helix/users?id='.$this->userId;
         $response = $this->apiClient->makeCurlCall($url, $headers);
-        return $response;
+        $data = json_decode($response, true)['data'];
+        return $data;
     }
 
     /**
