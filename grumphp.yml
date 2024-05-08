@@ -32,7 +32,7 @@ grumphp:
             allow_risky: false
             verbose: true
             triggered_by: ['php']
-            config_file: .php_cs.dist
+            config: .php_cs.dist
 
     testsuites: []
     extensions: []
