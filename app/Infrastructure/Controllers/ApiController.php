@@ -3,37 +3,30 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Infrastructure\Clients\ApiClient;
+use Illuminate\Support\Facades\Http;
 
 class ApiController extends Controller
 {
-    public function getTop3Games() {
+    public function getTop3Games()
+    {
         $url = 'https://api.twitch.tv/helix/games/top?first=3';
         $apiClient = new ApiClient();
-
         $headers = [
             'Authorization' => 'Bearer '.$apiClient->getToken(),
             'Client-Id' => env("CLIENT_ID")
         ];
 
-        $curl = curl_init();
+        $response = Http::withHeaders($headers)->get($url);
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPGET, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        if ($response === false) {
-            //$error = curl_error($curl);
-            //echo "Error al realizar la solicitud: " . $error;
-            return null;
-        } else {
-            $obj = json_decode($response, true);
-            echo $obj;
+        if ($response -> successful()) {
+            //$obj = json_decode($response, true);
+            $obj = $response->json();
             $top3_games = $obj["data"];
+            //return response()->json($top3_games, 200, [], JSON_PRETTY_PRINT);
             return $top3_games;
+        } else {
+            //return response()->json(['error' => 'Error al realizar la solicitud'], 500);
+            return [];
         }
     }
 
@@ -46,24 +39,18 @@ class ApiController extends Controller
             'Client-Id' => env("CLIENT_ID")
         ];
 
-        $curl = curl_init();
+        $response = Http::withHeaders($headers)->get($url);
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPGET, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        if ($response ->successful()) {
+            $obj = json_decode($response, true);
+            $top40_videos = $obj["data"];
+            return $top40_videos;
 
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        if ($response === false) {
+        } else {
             //$error = curl_error($curl);
             //echo "Error al realizar la solicitud: " . $error;
             return null;
-        } else {
-            $obj = json_decode($response, true);
-            $top3_games = $obj["data"];
-            return $top3_games;
+
         }
     }
 }

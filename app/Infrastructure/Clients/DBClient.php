@@ -36,7 +36,7 @@ class DBClient
     {
         try {
             $json_data = json_encode($new);
-            $sql = "INSERT INTO Presentar (ID, Datos) VALUES (?,?)";
+            $sql = "INSERT INTO presentar (ID, datos) VALUES (?,?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("is", $new["game_id"], $json_data);
             if ($stmt->execute()) {
@@ -59,14 +59,14 @@ class DBClient
     public function setNew40GamesInDB($array, $conn)
     {
         //Primero eliminamos los ultimos 40 registros para meter los del siguiente juego
-        $sql = "DELETE FROM Datos";
+        $sql = "DELETE FROM datos";
 
         // Ejecutar la sentencia SQL
         if ($conn->query($sql) === true) {
 
             foreach($array as $entry) {
                 try {
-                    $sql = "INSERT INTO Datos (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO datos (title, user, views, duracion, fecha_creacion) VALUES (?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("ssiss", $entry["title"], $entry["user_name"], $entry["view_count"], $entry["duration"], $entry["created_at"]);
                     $stmt->execute();
@@ -91,7 +91,7 @@ class DBClient
     public function getVideosFromUserFromDB($user, $conn)
     {
         $sql = "SELECT user, COUNT(*) AS total_videos
-        FROM Datos
+        FROM datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -106,7 +106,7 @@ class DBClient
     public function getSumViewsFromUserFromDB($user, $conn)
     {
         $sql = "SELECT user, SUM(views) AS total_views
-        FROM Datos
+        FROM datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -121,7 +121,7 @@ class DBClient
     public function getMostViewedFromUserFromDB($user, $conn)
     {
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
-        FROM Datos
+        FROM datos
         WHERE user = '$user'
         GROUP BY user;";
         $result = $conn->query($sql);
@@ -142,14 +142,14 @@ class DBClient
     public function getLast10($id)
     {
         $conn = $this->connectToDB();
-        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
+        $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
         $statement->bind_param("i", $id);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            return json_decode($row["Datos"]);
+            return json_decode($row["datos"]);
         } else {
             return null;
         }
@@ -158,14 +158,14 @@ class DBClient
     public function getSince($seconds, $id)
     {
         $conn = $this->connectToDB();
-        $sql = "SELECT * FROM Presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
+        $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
         $statement->bind_param("ii", $seconds, $id);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            return json_decode($row["Datos"]);
+            return json_decode($row["datos"]);
         } else {
             return null;
         }
@@ -175,7 +175,7 @@ class DBClient
     {
         $conn = $this->connectToDB();
         try {
-            $sql = "SELECT COUNT(*) FROM Presentar WHERE ID = ?";
+            $sql = "SELECT COUNT(*) FROM presentar WHERE ID = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
@@ -223,7 +223,7 @@ class DBClient
         $apiController = new ApiController();
         $conn = $this->connectToDB();
         try {
-            $sql = "DELETE FROM Presentar WHERE id = ?";
+            $sql = "DELETE FROM presentar WHERE id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();

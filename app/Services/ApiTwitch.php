@@ -123,6 +123,6 @@ class ApiTwitch
             }
             $topsOfTheTops[] = $json;
         }
-        return response()->json($topsOfTheTops);
+        return response()->json($topsOfTheTops, 200, [], JSON_PRETTY_PRINT);
     }
 }
