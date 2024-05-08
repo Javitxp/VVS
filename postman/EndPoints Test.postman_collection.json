@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "af352777-3085-447d-8728-4b3b268d68e2",
+		"name": "EndPoints Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33844047"
+	},
+	"item": [
+		{
+			"name": "Estructura streams correcta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cada objeto tiene los campos requeridos\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    // Verifica que cada objeto dentro del array tenga los campos requeridos",
+							"    jsonData.forEach(function (obj, index) {",
+							"        pm.expect(obj).to.have.property('title');",
+							"        pm.expect(obj).to.have.property('user_name');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/streams/",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"streams",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estructura users correcta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"La respuesta tiene los campos esperados\", function () {",
+							"    pm.response.to.have.jsonBody('id');",
+							"    pm.response.to.have.jsonBody('login');",
+							"    pm.response.to.have.jsonBody('display_name');",
+							"    pm.response.to.have.jsonBody('type');",
+							"    pm.response.to.have.jsonBody('broadcaster_type');",
+							"    pm.response.to.have.jsonBody('profile_image_url');",
+							"    pm.response.to.have.jsonBody('offline_image_url');",
+							"    pm.response.to.have.jsonBody('view_count');",
+							"    pm.response.to.have.jsonBody('created_at');",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/users/?id=83232866",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"users",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "83232866"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Estructura TotT correcta",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Cada objeto tiene los campos requeridos\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    jsonData.forEach(function (obj, index) {",
+							"        pm.expect(obj).to.have.property('game_id');",
+							"        pm.expect(obj).to.have.property('game_name');",
+							"        pm.expect(obj).to.have.property('user_name');",
+							"        pm.expect(obj).to.have.property('total_videos');",
+							"        pm.expect(obj).to.have.property('total_views');",
+							"        pm.expect(obj).to.have.property('most_viewed_title');",
+							"        pm.expect(obj).to.have.property('most_viewed_views');",
+							"        pm.expect(obj).to.have.property('most_viewed_duration');",
+							"        pm.expect(obj).to.have.property('most_viewed_created_at');",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/topsofthetops/",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"topsofthetops",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Longitud TotT 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El tamaño del array es 3\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array').and.to.have.lengthOf(3);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/topsofthetops/",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"topsofthetops",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Campos numéricos correctos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Los campos numéricos son válidos\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    jsonData.forEach(function (obj, index) {",
+							"",
+							"        var totalVideosNumber = parseFloat(obj.total_videos);",
+							"        var totalViewsNumber = parseFloat(obj.total_views);",
+							"",
+							"        pm.expect(totalVideosNumber).to.be.above(-1);",
+							"        pm.expect(totalViewsNumber).to.be.above(-1);",
+							"        pm.expect(totalVideosNumber).to.be.finite;",
+							"        pm.expect(totalViewsNumber).to.be.finite;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/topsofthetops/",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"topsofthetops",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Respuesta sin UserID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar mensaje 'Parameter id required'\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Parameter id required\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://losparserosvvweb.000webhostapp.com/analytics/users/",
+					"protocol": "https",
+					"host": [
+						"losparserosvvweb",
+						"000webhostapp",
+						"com"
+					],
+					"path": [
+						"analytics",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
