@@ -2,15 +2,18 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Infrastructure\Clients\ApiClient;
+
 class ApiController extends Controller
 {
     public function getTop3Games() {
         $url = 'https://api.twitch.tv/helix/games/top?first=3';
+        $apiClient = new ApiClient();
 
-        $headers = array(
-            'Authorization: Bearer m8n110x82us492oc94ciqwx97iuo3t',
-            'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87'
-        );
+        $headers = [
+            'Authorization' => 'Bearer '.$apiClient->getToken(),
+            'Client-Id' => env("CLIENT_ID")
+        ];
 
         $curl = curl_init();
 
@@ -28,6 +31,7 @@ class ApiController extends Controller
             return null;
         } else {
             $obj = json_decode($response, true);
+            echo $obj;
             $top3_games = $obj["data"];
             return $top3_games;
         }
@@ -35,11 +39,12 @@ class ApiController extends Controller
 
     public function getTop40Videos($id) {
         $url = 'https://api.twitch.tv/helix/videos?game_id='.$id.'&first=40&sort=views';
+        $apiClient = new ApiClient();
 
-        $headers = array(
-            'Authorization: Bearer m8n110x82us492oc94ciqwx97iuo3t',
-            'Client-Id: rxbua83lt6p4yqdig92dvsoicmdi87'
-        );
+        $headers = [
+            'Authorization' => 'Bearer '.$apiClient->getToken(),
+            'Client-Id' => env("CLIENT_ID")
+        ];
 
         $curl = curl_init();
 
