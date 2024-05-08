@@ -4,15 +4,15 @@ namespace App\Infrastructure\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Services\ApiTwitch;
+use App\Services\UserDataManager;
 
 class UsersController extends Controller
 {
-    protected $apiTwitch;
+    private $userDataManager;
 
-    public function __construct(ApiTwitch $apiTwitch)
+    public function __construct(UserDataManager $userDataManager)
     {
-        $this->apiTwitch = $apiTwitch;
+        $this->userDataManager = $userDataManager;
     }
 
     /**
@@ -20,7 +20,8 @@ class UsersController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-        return ($this->apiTwitch->getUsers($request)) ;
+        $this->userDataManager->setUserId($request->input("id"));
+        return response()->json($this->userDataManager->getUserData());
 
     }
 }
