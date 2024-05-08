@@ -15,10 +15,6 @@ class UserDataProvider
     }
 
     public function getUserData() {
-        if(!isset($this->userId)){
-            http_response_code(500);
-            return json_encode(['message' => 'Parameter id required']);
-        }
         $headers = array('Authorization: Bearer '.$this->apiClient->getToken());
         $url = 'https://api.twitch.tv/helix/users?id='.$this->userId;
         $response = $this->apiClient->makeCurlCall($url, $headers);

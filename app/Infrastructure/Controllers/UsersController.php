@@ -20,6 +20,12 @@ class UsersController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
+        if(!$request->has("id")){
+            return response()->json(['message' => 'Parameter id required'],500);
+        }
+        if (!is_numeric($request->input("id"))) {
+            return response()->json(['message' => 'Parameter id must be a number'], 500);
+        }
         $this->userDataManager->setUserId($request->input("id"));
         return response()->json($this->userDataManager->getUserData());
 
