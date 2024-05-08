@@ -27,7 +27,7 @@ grumphp:
         git_commit_message:
             enforce_capitalized_subject: false
             matchers:
-                Formato debe ser [N_ISSUE] - MENSAJE: /(\[\d+\] - .+)/
+                Formato debe ser [N_ISSUE] - MENSAJE: /(\[#\d+\] - .+)/
         phpcsfixer:
             allow_risky: false
             verbose: true
