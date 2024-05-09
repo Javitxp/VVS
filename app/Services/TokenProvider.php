@@ -23,9 +23,10 @@ class TokenProvider
             return $token;
         }
         $token = $this->apiClient->getToken();
-        if($this->dbClient->insertToken($token)) {
-            return $token;
+        if($token == null) {
+            return null;
         }
+        $this->dbClient->replaceToken($token);
         return $token;
     }
 }

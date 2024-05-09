@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Clients;
 
-
 use App\Infrastructure\Controllers\ApiController;
 use Exception;
 use mysqli;
@@ -257,25 +256,25 @@ class DBClient
 
     public function getToken()
     {
-        // TODO: Comprobar que funciona
-        echo "Ejecutando getToken:";
         $conn = $this->connectToDB();
         $sql = "SELECT value FROM token;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            echo "Aqui la row:";
-            print_r($row);
             return $row["value"];
         } else {
             return null;
         }
     }
 
-    public function insertToken(String $token)
+    public function replaceToken(String $token)
     {
-        // TODO: Comprobar que funciona
         $conn = $this->connectToDB();
+        $sql = "DELETE from token;";
+        $result = $conn->query($sql);
+        if($result === false) {
+            return false;
+        }
         $sql = "INSERT into token (value) VALUES (?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $token);
