@@ -272,4 +272,19 @@ class DBClient
         }
     }
 
+    public function insertToken(String $token)
+    {
+        // TODO: Comprobar que funciona
+        $conn = $this->connectToDB();
+        $sql = "INSERT into token (value) VALUES (?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
