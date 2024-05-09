@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Infrastructure\Clients\ApiClient;
+use App\Utilities\ErrorCodes;
+use Exception;
 
 class StreamsDataProvider
 {
@@ -13,9 +15,13 @@ class StreamsDataProvider
     }
     public function execute($token)
     {
-        $url = 'https://api.twitch.tv/helix/streams';
         $headers = array('Authorization: Bearer '. $token);
-        $response = $this->apiClient->makeCurlCall($url, $headers);
+        $url = 'https://api.twitch.tv/helix/streams';
+        try {
+            $response = $this->apiClient->makeCurlCall($url, $headers);
+        } catch (Exception $e) {
+            throw new Exception("Error: Code 500", ErrorCodes::STREAMS_500);
+        }
         $data = json_decode($response, true)['data'];
         return $data;
     }

@@ -4,13 +4,14 @@ namespace App\Infrastructure\Controllers;
 
 use App\Services\ApiTwitch;
 use App\Services\StreamsDataManager;
+use App\Utilities\ErrorCodes;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class StreamsController extends Controller
 {
-
     private $streamsDataManager;
 
     public function __construct(StreamsDataManager $streamsDataManager)
@@ -23,6 +24,21 @@ class StreamsController extends Controller
      */
     public function __invoke(): JsonResponse
     {
-        return response()->json($this->streamsDataManager->getStreams());
+        try {
+            return response()->json($this->streamsDataManager->getStreams());
+        } catch (Exception $e) {
+            switch ($e->getCode()) {
+                case ErrorCodes::TOKEN_500:
+                    $msg = "No se puede establecer conexión con Twitch en este momento";
+                    break;
+                case ErrorCodes::STREAMS_500:
+                    $msg = "No se pueden devolver streams en este momento, inténtalo más tarde";
+                    break;
+                default:
+                    $msg = "Internal server error";
+                    break;
+            }
+            return response()->json(['error' => $msg], 503);
+        }
     }
 }
