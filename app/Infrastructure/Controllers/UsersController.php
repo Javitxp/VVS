@@ -34,12 +34,16 @@ class UsersController extends Controller
         } catch (Exception $e) {
             switch ($e->getCode()) {
                 case ErrorCodes::TOKEN_500:
-                    return response()->json(['error' => 'No se puede establecer conexión con Twitch en este momento'], 500);
+                    $msg = "No se puede establecer conexión con Twitch en este momento";
+                    break;
                 case ErrorCodes::USERS_500:
-                    return response()->json(['error' => 'No se pueden devolver usuarios en este momento, inténtalo más tarde'], 500);
+                    $msg = "No se pueden devolver usuarios en este momento, inténtalo más tarde";
+                    break;
                 default:
-                    return response()->json(['error' => 'Internal server error'], 500);
+                    $msg = "Internal server error";
+                    break;
             }
+            return response()->json(['error' => $msg], 503);
         }
 
     }

@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Infrastructure\Clients\ApiClient;
+use App\Utilities\ErrorCodes;
+use Exception;
 
 class UserDataProvider
 {
     private String $userId;
+    private ApiClient $apiClient;
 
     public function __construct(ApiClient $apiClient)
     {
@@ -17,7 +20,11 @@ class UserDataProvider
     {
         $headers = array('Authorization: Bearer ' . $token);
         $url = 'https://api.twitch.tv/helix/users?id='.$this->userId;
-        $response = $this->apiClient->makeCurlCall($url, $headers);
+        try {
+            $response = $this->apiClient->makeCurlCall($url, $headers);
+        } catch (Exception $e) {
+            throw new Exception("Error: Code 500", ErrorCodes::USERS_500);
+        }
         $data = json_decode($response, true)['data'];
         return $data;
     }

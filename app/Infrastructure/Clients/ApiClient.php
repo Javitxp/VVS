@@ -60,7 +60,6 @@ class ApiClient
         curl_setopt($curlHeaders, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($curlHeaders);
-        $http_status = curl_getinfo($curlHeaders, CURLINFO_HTTP_CODE);
 
         if(curl_errno($curlHeaders)) {
             echo 'Error en la peticion para obtener token';
@@ -68,6 +67,12 @@ class ApiClient
         }
 
         curl_close($curlHeaders);
+
+        $http_code = curl_getinfo($curlHeaders, CURLINFO_HTTP_CODE);
+        if ($http_code == 500) {
+            throw new Exception("Error: Code 500");
+        }
+
         return $response;
     }
 }
