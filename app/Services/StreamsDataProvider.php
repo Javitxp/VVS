@@ -11,10 +11,10 @@ class StreamsDataProvider
     {
         $this->apiClient = $apiClient;
     }
-    public function execute()
+    public function execute($token)
     {
         $url = 'https://api.twitch.tv/helix/streams';
-        $headers = array('Authorization: Bearer '.$this->apiClient->getToken());
+        $headers = array('Authorization: Bearer '. $token);
         $response = $this->apiClient->makeCurlCall($url, $headers);
         $data = json_decode($response, true)['data'];
         return $data;
