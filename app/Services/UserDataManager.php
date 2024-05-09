@@ -4,7 +4,6 @@ namespace App\Services;
 
 class UserDataManager
 {
-
     private $tokenProvider;
     private $userDataProvider;
 
@@ -16,11 +15,12 @@ class UserDataManager
 
     public function getUserData()
     {
-        $response = $this->userDataProvider->getUserData();
+        $response = $this->userDataProvider->getUserData($this->tokenProvider->getToken());
         return $response;
     }
 
-    public function setUserId($userId){
+    public function setUserId($userId)
+    {
         $this->userDataProvider->setUserId($userId);
     }
 
