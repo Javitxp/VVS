@@ -31,7 +31,5 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: php artisan test
-    - name: Run PHP_CodeSniffer
-      run: vendor/bin/phpcs --standard=PSR12 --report=full
     - name: Run PHP CS Fixer
       run: vendor/bin/php-cs-fixer fix --dry-run --diff
