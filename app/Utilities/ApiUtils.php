@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Utilities;
 
 use App\Infrastructure\Clients\ApiClient;
 use Illuminate\Support\Facades\Http;
 
-class ApiController extends Controller
+class ApiUtils
 {
     public function getTop3Games()
     {

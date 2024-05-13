@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Infrastructure\Clients\DBClient;
-use App\Infrastructure\Controllers\ApiController;
 use App\Infrastructure\Clients\ApiClient;
+use App\Infrastructure\Clients\DBClient;
+use App\Utilities\ApiUtils;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-require_once __DIR__ . '/../Infrastructure/Controllers/ApiController.php';
+require_once __DIR__ . '/../Infrastructure/Controllers/ApiUtils.php';
 require_once __DIR__ . '/../Infrastructure/Clients/DBClient.php';
 
 
@@ -97,7 +97,7 @@ class ApiTwitch
     }
     public function getTopOfTheTops(Request $request): JsonResponse
     {
-        $apiController = new ApiController();
+        $apiController = new ApiUtils();
         // Obtener el top 3 de juegos
         $top3_games = $apiController->getTop3Games();
         if ($top3_games === null) {

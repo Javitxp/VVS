@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Clients;
 
-use App\Infrastructure\Controllers\ApiController;
+use App\Utilities\ApiUtils;
 use Exception;
 use mysqli;
 
@@ -191,7 +191,7 @@ class DBClient
 
     public function getAndInsertGame($id, $name)
     {
-        $apiController = new ApiController();
+        $apiController = new ApiUtils();
         $conn = $this->connectToDB();
         $array = $apiController->getTop40Videos($id);
         $topUser = $array[0];
@@ -219,7 +219,7 @@ class DBClient
 
     public function updateGame($id, $name)
     {
-        $apiController = new ApiController();
+        $apiController = new ApiUtils();
         $conn = $this->connectToDB();
         try {
             $sql = "DELETE FROM presentar WHERE id = ?";
