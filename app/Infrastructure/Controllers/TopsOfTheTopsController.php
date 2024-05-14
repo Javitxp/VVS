@@ -10,12 +10,10 @@ use Illuminate\Http\Request;
 class TopsOfTheTopsController extends Controller
 {
     protected TopsOfTheTopsDataManager $topsOfTheTopsDataManager;
-
     public function __construct(TopsOfTheTopsDataManager $topsOfTheTopsDataManager)
     {
         $this->topsOfTheTopsDataManager = $topsOfTheTopsDataManager;
     }
-
     /**
      * Handle the incoming request.
      */
