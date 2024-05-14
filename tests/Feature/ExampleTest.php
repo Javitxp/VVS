@@ -147,16 +147,16 @@ class ExampleTest extends TestCase
     /**
      * @test
      */
-    public function analyticsUsersReturnsErrorMessageWithCode503WhenFailInGettingToken(): void
+    public function analyticsStreamersReturnsErrorMessageWithCode503WhenFailInGettingToken(): void
     {
         $userDataManagerMock = $this->mock(StreamerDataManager::class);
 
-        $userDataManagerMock->shouldReceive('setUserId')->with('69')->once();
+        $userDataManagerMock->shouldReceive('setStreamerId')->with('69')->once();
 
-        $userDataManagerMock->shouldReceive('getUserData')
+        $userDataManagerMock->shouldReceive('getStreamerData')
             ->andThrow(new Exception("No se puede establecer conexión con Twitch en este momento", ErrorCodes::TOKEN_500));
 
-        $response = $this->get('/analytics/users?id=69');
+        $response = $this->get('/analytics/streamers?id=69');
 
         $response->assertStatus(503);
         $response->assertJson(['error' => "No se puede establecer conexión con Twitch en este momento"]);
@@ -164,18 +164,18 @@ class ExampleTest extends TestCase
     /**
      * @test
      */
-    public function analyticsUsersReturnsErrorMessageWithCode503WhenFailInGettingUsers(): void
+    public function analyticsStreamersReturnsErrorMessageWithCode503WhenFailInGettingStreamers(): void
     {
         $userDataManagerMock = $this->mock(StreamerDataManager::class);
 
-        $userDataManagerMock->shouldReceive('setUserId')->with('69')->once();
+        $userDataManagerMock->shouldReceive('setStreamerId')->with('69')->once();
 
-        $userDataManagerMock->shouldReceive('getUserData')
-            ->andThrow(new Exception("No se pueden devolver usuarios en este momento, inténtalo más tarde", ErrorCodes::STREAMERS_500));
+        $userDataManagerMock->shouldReceive('getStreamerData')
+            ->andThrow(new Exception("No se pueden devolver streamers en este momento, inténtalo más tarde", ErrorCodes::STREAMERS_500));
 
-        $response = $this->get('/analytics/users?id=69');
+        $response = $this->get('/analytics/streamers?id=69');
 
         $response->assertStatus(503);
-        $response->assertJson(['error' => "No se pueden devolver usuarios en este momento, inténtalo más tarde"]);
+        $response->assertJson(['error' => "No se pueden devolver streamers en este momento, inténtalo más tarde"]);
     }
 }

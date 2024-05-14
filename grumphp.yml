@@ -33,6 +33,8 @@ grumphp:
             verbose: true
             config: .php-cs-fixer.dist.php
             triggered_by: ['php']
+        phpunit:
+          testsuite: Feature
 
 
     testsuites: []
