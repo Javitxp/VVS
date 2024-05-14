@@ -2,10 +2,10 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Infrastructure\Requests\GetStreamersRequest;
 use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Services\UserDataManager;
 
 class UsersController extends Controller
@@ -20,14 +20,8 @@ class UsersController extends Controller
     /**
      * Handle the incoming request
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(GetStreamersRequest $request): JsonResponse
     {
-        if(!$request->has("id")) {
-            return response()->json(['message' => 'Parameter id required'], 500);
-        }
-        if (!is_numeric($request->input("id"))) {
-            return response()->json(['message' => 'Parameter id must be a number'], 500);
-        }
         try {
             return response()->json($this->userDataManager->getUserData($request->input("id")));
         } catch (Exception $e) {

@@ -18,7 +18,7 @@ class GetUsersTest extends TestCase
         $response = $this->get('/analytics/users');
 
         $response->assertStatus(500);
-        $response->assertJson(['message' => 'Parameter id required']);
+        $response->assertJson(['message' => 'The id field is required.']);
     }
 
     /**
@@ -29,7 +29,7 @@ class GetUsersTest extends TestCase
         $response = $this->get('/analytics/users?id=abcde');
 
         $response->assertStatus(500);
-        $response->assertJson(['message' => 'Parameter id must be a number']);
+        $response->assertJson(['message' => 'The id field must be a number.']);
     }
 
     /**
