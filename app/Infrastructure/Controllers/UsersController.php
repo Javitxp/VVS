@@ -10,7 +10,7 @@ use App\Services\UserDataManager;
 
 class UsersController extends Controller
 {
-    private $userDataManager;
+    private UserDataManager $userDataManager;
 
     public function __construct(UserDataManager $userDataManager)
     {
@@ -28,21 +28,14 @@ class UsersController extends Controller
         if (!is_numeric($request->input("id"))) {
             return response()->json(['message' => 'Parameter id must be a number'], 500);
         }
-        $this->userDataManager->setUserId($request->input("id"));
         try {
-            return response()->json($this->userDataManager->getUserData());
+            return response()->json($this->userDataManager->getUserData($request->input("id")));
         } catch (Exception $e) {
-            switch ($e->getCode()) {
-                case ErrorCodes::TOKEN_500:
-                    $msg = "No se puede establecer conexión con Twitch en este momento";
-                    break;
-                case ErrorCodes::USERS_500:
-                    $msg = "No se pueden devolver usuarios en este momento, inténtalo más tarde";
-                    break;
-                default:
-                    $msg = "Internal server error";
-                    break;
-            }
+            $msg = match ($e->getCode()) {
+                ErrorCodes::TOKEN_500 => "No se puede establecer conexión con Twitch en este momento",
+                ErrorCodes::USERS_500 => "No se pueden devolver usuarios en este momento, inténtalo más tarde",
+                default => "Internal server error",
+            };
             return response()->json(['error' => $msg], 503);
         }
 

@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use Exception;
+
 class UserDataManager
 {
-    private $tokenProvider;
-    private $userDataProvider;
+    private TokenProvider $tokenProvider;
+    private UserDataProvider $userDataProvider;
 
     public function __construct(TokenProvider $tokenProvider, UserDataProvider $userDataProvider)
     {
@@ -13,15 +15,11 @@ class UserDataManager
         $this->userDataProvider = $userDataProvider;
     }
 
-    public function getUserData()
+    /**
+     * @throws Exception
+     */
+    public function getUserData($userId)
     {
-        $response = $this->userDataProvider->getUserData($this->tokenProvider->getToken());
-        return $response;
+        return $this->userDataProvider->getUserData($this->tokenProvider->getToken(), $userId);
     }
-
-    public function setUserId($userId)
-    {
-        $this->userDataProvider->setUserId($userId);
-    }
-
 }
