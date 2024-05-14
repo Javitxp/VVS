@@ -38,6 +38,7 @@ grumphp:
         phpmd:
           triggered_by: ['php']
           ruleset: [cleancode,naming]
+          report_format: text
 
 
     testsuites: []
