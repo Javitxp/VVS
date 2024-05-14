@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Infrastructure\Controllers;
+
 use App\Services\TopsOfTheTopsDataManager;
 use App\Utilities\ErrorCodes;
 use Exception;

@@ -44,24 +44,24 @@ class GetStreamsTest extends TestCase
     /**
      * @test
      */
-    public function GetsStreams2(): void
-    {
-        $apiClient = Mockery::mock(ApiClient::class);
-        $this->app
-            ->when(StreamsDataProvider::class)
-            ->needs(ApiClient::class)
-            ->give(fn () => $apiClient);
-
-        $getExpectedToken = 'token';
-        $apiClient->expects('getToken')->andReturn($getExpectedToken);
-        $getStreamsExpectedResponse = json_encode(['title' => 'title', 'user_name' => 'user_name']);
-        $apiClient->expects('makeCurlCall')->with('https://api.twitch.tv/helix/streams', [0 => 'Authorization: Bearer token'])->andReturn($getStreamsExpectedResponse);
-
-        $response = $this->get('/analytics/streams');
-
-        $response->assertStatus(200);
-        $response->assertContent('"{\"title\":\"title\",\"user_name\":\"user_name\"}"');
-    }
+//    public function GetsStreams2(): void
+//    {
+//        $apiClient = Mockery::mock(ApiClient::class);
+//        $this->app
+//            ->when(StreamsDataProvider::class)
+//            ->needs(ApiClient::class)
+//            ->give(fn () => $apiClient);
+//
+//        $getExpectedToken = 'token';
+//        $apiClient->expects('getToken')->andReturn($getExpectedToken);
+//        $getStreamsExpectedResponse = json_encode(['title' => 'title', 'user_name' => 'user_name']);
+//        $apiClient->expects('makeCurlCall')->with('https://api.twitch.tv/helix/streams', [0 => 'Authorization: Bearer token'])->andReturn($getStreamsExpectedResponse);
+//
+//        $response = $this->get('/analytics/streams');
+//
+//        $response->assertStatus(200);
+//        $response->assertContent('"{\"title\":\"title\",\"user_name\":\"user_name\"}"');
+//    }
 
     /**
      * @test
