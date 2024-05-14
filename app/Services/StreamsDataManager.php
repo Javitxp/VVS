@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Exception;
+
 class StreamsDataManager
 {
     private TokenProvider $tokenProvider;
@@ -12,10 +14,12 @@ class StreamsDataManager
         $this->streamsDataProvider = $streamsDataProvider;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getStreams()
     {
-        $response = $this->streamsDataProvider->execute($this->tokenProvider->getToken());
-        return $response;
+        return $this->streamsDataProvider->execute($this->tokenProvider->getToken());
     }
 
 }
