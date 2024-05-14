@@ -217,6 +217,32 @@ class DBClient
         return $allData;
     }
 
+    public function getAndInsertGameTopsOfTheTops($id, $name, $top40Videos)
+    {
+        $conn = $this->connectToDB();
+        $topUser = $top40Videos[0];
+        $user = $topUser["user_name"];
+        $this->setNew40GamesInDB($top40Videos, $conn);
+        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
+        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
+        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
+
+        $allData = array(
+            "game_id" => $id,
+            "game_name" => $name,
+            "user_name" => $user,
+            "total_videos" => $totalVideos,
+            "total_views" => $sum,
+            "most_viewed_title" => $dataMostViewed["most_viewed_title"],
+            "most_viewed_views" => $dataMostViewed["most_viewed_views"],
+            "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
+            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
+        );
+        $this->insertNewGame($conn, $allData);
+        $this->closeConnectionDB($conn);
+        return $allData;
+    }
+
     public function updateGame($id, $name)
     {
         $apiController = new ApiUtils();
@@ -234,6 +260,40 @@ class DBClient
         $topUser = $array[0];
         $user = $topUser["user_name"];
         $this->setNew40GamesInDB($array, $conn);
+        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
+        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
+        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
+
+        $allData = array(
+            "game_id" => $id,
+            "game_name" => $name,
+            "user_name" => $user,
+            "total_videos" => $totalVideos,
+            "total_views" => $sum,
+            "most_viewed_title" => $dataMostViewed["most_viewed_title"],
+            "most_viewed_views" => $dataMostViewed["most_viewed_views"],
+            "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
+            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
+        );
+        $this->insertNewGame($conn, $allData);
+        $this->closeConnectionDB($conn);
+        return $allData;
+    }
+    public function updateGameTopsOfTheTops($id, $name, $top40Videos)
+    {
+        $conn = $this->connectToDB();
+        try {
+            $sql = "DELETE FROM presentar WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->close();
+        } catch (Exception $e) {
+            return;
+        }
+        $topUser = $top40Videos[0];
+        $user = $topUser["user_name"];
+        $this->setNew40GamesInDB($top40Videos, $conn);
         $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
         $sum = $this->getSumViewsFromUserFromDB($user, $conn);
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);

@@ -49,6 +49,9 @@ class ApiClient
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function makeCurlCall($url, $headers): String
     {
         $curlHeaders = curl_init();
@@ -74,5 +77,29 @@ class ApiClient
         }
 
         return $response;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getTop3Games($headers)
+    {
+        $url = 'https://api.twitch.tv/helix/games/top?first=3';
+
+        $headers[] = 'Client-Id: ' . env("CLIENT_ID");
+
+        return $this->makeCurlCall($url, $headers);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getTop40Videos($id, $headers)
+    {
+        $url = 'https://api.twitch.tv/helix/videos?game_id='.$id.'&first=40&sort=views';
+
+        $headers[] = 'Client-Id: ' . env("CLIENT_ID");
+
+        return $this->makeCurlCall($url, $headers);
     }
 }
