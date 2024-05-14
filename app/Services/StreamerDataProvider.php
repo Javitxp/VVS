@@ -6,9 +6,9 @@ use App\Infrastructure\Clients\ApiClient;
 use App\Utilities\ErrorCodes;
 use Exception;
 
-class UserDataProvider
+class StreamerDataProvider
 {
-    private String $userId;
+    private String $streamerId;
     private ApiClient $apiClient;
 
     public function __construct(ApiClient $apiClient)
@@ -16,24 +16,24 @@ class UserDataProvider
         $this->apiClient = $apiClient;
     }
 
-    public function getUserData($token)
+    public function getStreamerData($token)
     {
         $headers = array('Authorization: Bearer ' . $token);
-        $url = 'https://api.twitch.tv/helix/users?id='.$this->userId;
+        $url = 'https://api.twitch.tv/helix/users?id='.$this->streamerId;
         try {
             $response = $this->apiClient->makeCurlCall($url, $headers);
         } catch (Exception $e) {
-            throw new Exception("Error: Code 500", ErrorCodes::USERS_500);
+            throw new Exception("Error: Code 500", ErrorCodes::STREAMERS_500);
         }
         $data = json_decode($response, true)['data'];
         return $data;
     }
 
     /**
-     * @param String $userId
+     * @param String $streamerId
      */
-    public function setUserId(string $userId): void
+    public function setStreamerId(string $streamerId): void
     {
-        $this->userId = $userId;
+        $this->streamerId = $streamerId;
     }
 }

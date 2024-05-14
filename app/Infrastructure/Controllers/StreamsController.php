@@ -2,13 +2,10 @@
 
 namespace App\Infrastructure\Controllers;
 
-use App\Services\ApiTwitch;
 use App\Services\StreamsDataManager;
 use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class StreamsController extends Controller
 {

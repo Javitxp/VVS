@@ -6,15 +6,15 @@ use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Services\UserDataManager;
+use App\Services\StreamerDataManager;
 
-class UsersController extends Controller
+class StreamersController extends Controller
 {
-    private $userDataManager;
+    private $streamersDataManager;
 
-    public function __construct(UserDataManager $userDataManager)
+    public function __construct(StreamerDataManager $streamersDataManager)
     {
-        $this->userDataManager = $userDataManager;
+        $this->streamersDataManager = $streamersDataManager;
     }
 
     /**
@@ -28,16 +28,16 @@ class UsersController extends Controller
         if (!is_numeric($request->input("id"))) {
             return response()->json(['message' => 'Parameter id must be a number'], 500);
         }
-        $this->userDataManager->setUserId($request->input("id"));
+        $this->streamersDataManager->setStreamerId($request->input("id"));
         try {
-            return response()->json($this->userDataManager->getUserData());
+            return response()->json($this->streamersDataManager->getStreamerData());
         } catch (Exception $e) {
             switch ($e->getCode()) {
                 case ErrorCodes::TOKEN_500:
                     $msg = "No se puede establecer conexión con Twitch en este momento";
                     break;
-                case ErrorCodes::USERS_500:
-                    $msg = "No se pueden devolver usuarios en este momento, inténtalo más tarde";
+                case ErrorCodes::STREAMERS_500:
+                    $msg = "No se pueden devolver streamers en este momento, inténtalo más tarde";
                     break;
                 default:
                     $msg = "Internal server error";

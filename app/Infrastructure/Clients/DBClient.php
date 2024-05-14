@@ -87,11 +87,11 @@ class DBClient
         }
     }
 
-    public function getVideosFromUserFromDB($user, $conn)
+    public function getVideosFromStreamerFromDB($streamer, $conn)
     {
         $sql = "SELECT user, COUNT(*) AS total_videos
         FROM datos
-        WHERE user = '$user'
+        WHERE user = '$streamer'
         GROUP BY user;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -102,11 +102,11 @@ class DBClient
         }
     }
 
-    public function getSumViewsFromUserFromDB($user, $conn)
+    public function getSumViewsFromStreamerFromDB($streamer, $conn)
     {
         $sql = "SELECT user, SUM(views) AS total_views
         FROM datos
-        WHERE user = '$user'
+        WHERE user = '$streamer'
         GROUP BY user;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -117,11 +117,11 @@ class DBClient
         }
     }
 
-    public function getMostViewedFromUserFromDB($user, $conn)
+    public function getMostViewedFromStreamerFromDB($streamer, $conn)
     {
         $sql = "SELECT user, title, max(views) AS views_max, duracion, fecha_creacion
         FROM datos
-        WHERE user = '$user'
+        WHERE user = '$streamer'
         GROUP BY user;";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -194,17 +194,17 @@ class DBClient
         $apiController = new ApiUtils();
         $conn = $this->connectToDB();
         $array = $apiController->getTop40Videos($id);
-        $topUser = $array[0];
-        $user = $topUser["user_name"];
+        $topStreamer = $array[0];
+        $streamer = $topStreamer["user_name"];
         $this->setNew40GamesInDB($array, $conn);
-        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
-        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
-        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
+        $totalVideos = $this->getVideosFromStreamerFromDB($streamer, $conn);
+        $sum = $this->getSumViewsFromStreamerFromDB($streamer, $conn);
+        $dataMostViewed = $this->getMostViewedFromStreamerFromDB($streamer, $conn);
 
         $allData = array(
             "game_id" => $id,
             "game_name" => $name,
-            "user_name" => $user,
+            "user_name" => $streamer,
             "total_videos" => $totalVideos,
             "total_views" => $sum,
             "most_viewed_title" => $dataMostViewed["most_viewed_title"],
@@ -231,17 +231,17 @@ class DBClient
             return;
         }
         $array = $apiController->getTop40Videos($id);
-        $topUser = $array[0];
-        $user = $topUser["user_name"];
+        $topStreamer = $array[0];
+        $streamer = $topStreamer["user_name"];
         $this->setNew40GamesInDB($array, $conn);
-        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
-        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
-        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
+        $totalVideos = $this->getVideosFromStreamerFromDB($streamer, $conn);
+        $sum = $this->getSumViewsFromStreamerFromDB($streamer, $conn);
+        $dataMostViewed = $this->getMostViewedFromStreamerFromDB($streamer, $conn);
 
         $allData = array(
             "game_id" => $id,
             "game_name" => $name,
-            "user_name" => $user,
+            "user_name" => $streamer,
             "total_videos" => $totalVideos,
             "total_views" => $sum,
             "most_viewed_title" => $dataMostViewed["most_viewed_title"],

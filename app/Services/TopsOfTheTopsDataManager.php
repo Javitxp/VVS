@@ -12,7 +12,8 @@ class TopsOfTheTopsDataManager
         $this->topsOfTheTopsDataProvider = $topsOfTheTopsDataProvider;
     }
 
-    public function getTopsOfTheTops(){
+    public function getTopsOfTheTops()
+    {
         $response = $this->topsOfTheTopsDataProvider->execute($this->tokenProvider->getToken());
         return $response;
     }

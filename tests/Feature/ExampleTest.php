@@ -6,8 +6,8 @@ namespace Tests\Feature;
 use App\Services\StreamsDataManager;
 use App\Services\StreamsDataProvider;
 use App\Services\TokenProvider;
-use App\Services\UserDataManager;
-use App\Services\UserDataProvider;
+use App\Services\StreamerDataManager;
+use App\Services\StreamerDataProvider;
 use App\Utilities\ErrorCodes;
 use Mockery;
 use Exception;
@@ -28,9 +28,9 @@ class ExampleTest extends TestCase
     /**
      * @test
      */
-    public function analyticsUsersReturns500WithoutId(): void
+    public function analyticsStreamersReturns500WithoutId(): void
     {
-        $response = $this->get('/analytics/users');
+        $response = $this->get('/analytics/streamers');
 
         $response->assertStatus(500);
         $response->assertJson(['message' => 'Parameter id required']);
@@ -39,9 +39,9 @@ class ExampleTest extends TestCase
     /**
      * @test
      */
-    public function analyticsUsersReturns500WithNonNumericId(): void
+    public function analyticsStreamersReturns500WithNonNumericId(): void
     {
-        $response = $this->get('/analytics/users?id=abcde');
+        $response = $this->get('/analytics/streamers?id=abcde');
 
         $response->assertStatus(500);
         $response->assertJson(['message' => 'Parameter id must be a number']);
@@ -50,18 +50,18 @@ class ExampleTest extends TestCase
     /**
      * @test
      */
-    public function analyticsUsersReturnSuccessfulResponseWithNumericId(): void
+    public function analyticsStreamersReturnSuccessfulResponseWithNumericId(): void
     {
-        $userDataProvider = Mockery::mock(UserDataProvider::class);
+        $userDataProvider = Mockery::mock(StreamerDataProvider::class);
         $tokenProvider = Mockery::mock(TokenProvider::class);
 
         $this->app
-            ->when(UserDataManager::class)
-            ->needs(UserDataProvider::class)
+            ->when(StreamerDataManager::class)
+            ->needs(StreamerDataProvider::class)
             ->give(fn() => $userDataProvider);
 
         $this->app
-            ->when(UserDataManager::class)
+            ->when(StreamerDataManager::class)
             ->needs(TokenProvider::class)
             ->give(fn() => $tokenProvider);
 
@@ -71,10 +71,10 @@ class ExampleTest extends TestCase
 
         $tokenProvider->expects('getToken')->andReturn($getExpectedToken);
 
-        $userDataProvider->expects('getUserData')->with($getExpectedToken)->andReturn($getUsersExpectedResponse);
-        $userDataProvider->expects('setUserId')->withArgs(["20"]);
+        $userDataProvider->expects('getStreamerData')->with($getExpectedToken)->andReturn($getUsersExpectedResponse);
+        $userDataProvider->expects('setStreamerId')->withArgs(["20"]);
 
-        $response = $this->get('/analytics/users?id=20');
+        $response = $this->get('/analytics/streamers?id=20');
 
         $response->assertStatus(200);
         $response->assertContent('"{\"user_id\":\"id\",\"user_name\":\"user_name\"}"');
@@ -149,7 +149,7 @@ class ExampleTest extends TestCase
      */
     public function analyticsUsersReturnsErrorMessageWithCode503WhenFailInGettingToken(): void
     {
-        $userDataManagerMock = $this->mock(UserDataManager::class);
+        $userDataManagerMock = $this->mock(StreamerDataManager::class);
 
         $userDataManagerMock->shouldReceive('setUserId')->with('69')->once();
 
@@ -166,12 +166,12 @@ class ExampleTest extends TestCase
      */
     public function analyticsUsersReturnsErrorMessageWithCode503WhenFailInGettingUsers(): void
     {
-        $userDataManagerMock = $this->mock(UserDataManager::class);
+        $userDataManagerMock = $this->mock(StreamerDataManager::class);
 
         $userDataManagerMock->shouldReceive('setUserId')->with('69')->once();
 
         $userDataManagerMock->shouldReceive('getUserData')
-            ->andThrow(new Exception("No se pueden devolver usuarios en este momento, inténtalo más tarde", ErrorCodes::USERS_500));
+            ->andThrow(new Exception("No se pueden devolver usuarios en este momento, inténtalo más tarde", ErrorCodes::STREAMERS_500));
 
         $response = $this->get('/analytics/users?id=69');
 

@@ -16,85 +16,85 @@ require_once __DIR__ . '/../Infrastructure/Clients/DBClient.php';
 
 class ApiTwitch
 {
-    public function getUsers(Request $request): JsonResponse
-    {
-        // Verificar si se recibió una solicitud GET
-        if (!$request->isMethod('get')) {
-            return response()->json(['message' => 'Only GET requests'], 405);
-        }
-
-        // Verificar si se proporcionó el parámetro id
-        if (!$request->has('id')) {
-            return response()->json(['message' => 'Parameter id required'], 400);
-        }
-
-        // Configurar url y autorización y client-id en el encabezado
-        $url = 'https://api.twitch.tv/helix/users?id=' . $request->input('id');
-
-        $apiClient = new ApiClient();
-
-        $headers = [
-            'Authorization' => 'Bearer ' . $apiClient->getToken(),
-            'Client-Id' => env("CLIENT_ID")
-        ];
-
-        // Realizar la solicitud HTTP
-        $response = Http::withHeaders($headers)->get($url);
-
-        // Verificar si la solicitud fue exitosa
-        if ($response->successful()) {
-            $user_data = $response->json();
-
-            // Verificar si hay datos disponibles
-            if (isset($user_data['data']) && count($user_data['data']) > 0) {
-                // Devolver la información del usuario en formato JSON
-                return response()->json($user_data['data'][0], 200, [], JSON_PRETTY_PRINT);
-            } else {
-                return response()->json(['message' => 'There is no user with id: ' . $request->input('id')], 404);
-            }
-        } else {
-            return response()->json(['message' => 'Error al realizar la solicitud: ' . $response->status()], 500);
-        }
-    }
-
-    public function getStreams(): JsonResponse
-    {
-        //Configurar url y autorizacion y client-id en header
-        $url = 'https://api.twitch.tv/helix/streams';
-
-        $apiClient = new ApiClient();
-
-        $headers = [
-            'Authorization' => 'Bearer '.$apiClient->getToken(),
-            'Client-Id' => env("CLIENT_ID")
-        ];
-
-        // Realizar la solicitud HTTP
-        $response = Http::withHeaders($headers)->get($url);
-
-        // Verificar si la solicitud fue exitosa
-        if ($response->successful()) {
-            $streams_data = $response->json();
-
-            // Verificar si hay datos disponibles
-            if (isset($streams_data['data'])) {
-                // Obtener la información necesaria (nombre del usuario y título del stream)
-                $stream_info = collect($streams_data['data'])->map(function ($stream) {
-                    return [
-                        'title' => $stream['title'],
-                        'user_name' => $stream['user_name']
-                    ];
-                });
-
-                // Devolver la información en formato JSON
-                return response()->json($stream_info, 200, [], JSON_PRETTY_PRINT);
-            } else {
-                return response()->json(['message' => 'No se encontraron datos de streams.'], 404);
-            }
-        } else {
-            return response()->json(['message' => 'Error al realizar la solicitud: ' . $response->status()], 500);
-        }
-    }
+    //    public function getUsers(Request $request): JsonResponse
+    //    {
+    //        // Verificar si se recibió una solicitud GET
+    //        if (!$request->isMethod('get')) {
+    //            return response()->json(['message' => 'Only GET requests'], 405);
+    //        }
+    //
+    //        // Verificar si se proporcionó el parámetro id
+    //        if (!$request->has('id')) {
+    //            return response()->json(['message' => 'Parameter id required'], 400);
+    //        }
+    //
+    //        // Configurar url y autorización y client-id en el encabezado
+    //        $url = 'https://api.twitch.tv/helix/users?id=' . $request->input('id');
+    //
+    //        $apiClient = new ApiClient();
+    //
+    //        $headers = [
+    //            'Authorization' => 'Bearer ' . $apiClient->getToken(),
+    //            'Client-Id' => env("CLIENT_ID")
+    //        ];
+    //
+    //        // Realizar la solicitud HTTP
+    //        $response = Http::withHeaders($headers)->get($url);
+    //
+    //        // Verificar si la solicitud fue exitosa
+    //        if ($response->successful()) {
+    //            $user_data = $response->json();
+    //
+    //            // Verificar si hay datos disponibles
+    //            if (isset($user_data['data']) && count($user_data['data']) > 0) {
+    //                // Devolver la información del usuario en formato JSON
+    //                return response()->json($user_data['data'][0], 200, [], JSON_PRETTY_PRINT);
+    //            } else {
+    //                return response()->json(['message' => 'There is no user with id: ' . $request->input('id')], 404);
+    //            }
+    //        } else {
+    //            return response()->json(['message' => 'Error al realizar la solicitud: ' . $response->status()], 500);
+    //        }
+    //    }
+    //
+    //    public function getStreams(): JsonResponse
+    //    {
+    //        //Configurar url y autorizacion y client-id en header
+    //        $url = 'https://api.twitch.tv/helix/streams';
+    //
+    //        $apiClient = new ApiClient();
+    //
+    //        $headers = [
+    //            'Authorization' => 'Bearer '.$apiClient->getToken(),
+    //            'Client-Id' => env("CLIENT_ID")
+    //        ];
+    //
+    //        // Realizar la solicitud HTTP
+    //        $response = Http::withHeaders($headers)->get($url);
+    //
+    //        // Verificar si la solicitud fue exitosa
+    //        if ($response->successful()) {
+    //            $streams_data = $response->json();
+    //
+    //            // Verificar si hay datos disponibles
+    //            if (isset($streams_data['data'])) {
+    //                // Obtener la información necesaria (nombre del usuario y título del stream)
+    //                $stream_info = collect($streams_data['data'])->map(function ($stream) {
+    //                    return [
+    //                        'title' => $stream['title'],
+    //                        'user_name' => $stream['user_name']
+    //                    ];
+    //                });
+    //
+    //                // Devolver la información en formato JSON
+    //                return response()->json($stream_info, 200, [], JSON_PRETTY_PRINT);
+    //            } else {
+    //                return response()->json(['message' => 'No se encontraron datos de streams.'], 404);
+    //            }
+    //        } else {
+    //            return response()->json(['message' => 'Error al realizar la solicitud: ' . $response->status()], 500);
+    //        }
+    //    }
     public function getTopOfTheTops(Request $request): JsonResponse
     {
         $apiController = new ApiUtils();
