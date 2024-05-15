@@ -26,10 +26,14 @@ class GetTokenTest extends TestCase
      */
     public function testGetTokenFromDB()
     {
+        $expectedToken = "token_from_db";	
+
         $this->dbClientMock->expects('getToken')
                      ->andReturn('token_from_db');
+
         $token = $this->tokenProvider->getToken();
-        $this->assertEquals('token_from_db', $token);
+
+        $this->assertEquals($expectedToken, $token);
     }
     
     /**
@@ -37,14 +41,17 @@ class GetTokenTest extends TestCase
      */
     public function testGetTokenFromAPI()
     {
+        $expectedToken = "token_from_api";	
+
         $this->dbClientMock->expects('getToken')
                      ->andReturn(null);
         $this->apiClientMock->expects('getToken')
                       ->andReturn('token_from_api');
         $this->dbClientMock->expects('replaceToken')
                       ->andReturn(true);
+
         $token = $this->tokenProvider->getToken();
-        $expectedToken = "token_from_api";	
+
         $this->assertEquals($expectedToken, $token);
     }
 
