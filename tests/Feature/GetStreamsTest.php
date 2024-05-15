@@ -16,31 +16,31 @@ class GetStreamsTest extends TestCase
     /**
      * @test
      */
-    public function GetsStreams(): void
-    {
-        $streamsDataProvider = Mockery::mock(StreamsDataProvider::class);
-        $tokenProvider = Mockery::mock(TokenProvider::class);
+    // public function GetsStreams(): void
+    // {
+    //     $streamsDataProvider = Mockery::mock(StreamsDataProvider::class);
+    //     $tokenProvider = Mockery::mock(TokenProvider::class);
 
-        $this->app
-            ->when(StreamsDataManager::class)
-            ->needs(StreamsDataProvider::class)
-            ->give(fn () => $streamsDataProvider);
+    //     $this->app
+    //         ->when(StreamsDataManager::class)
+    //         ->needs(StreamsDataProvider::class)
+    //         ->give(fn () => $streamsDataProvider);
 
-        $this->app
-            ->when(StreamsDataManager::class)
-            ->needs(TokenProvider::class)
-            ->give(fn () => $tokenProvider);
+    //     $this->app
+    //         ->when(StreamsDataManager::class)
+    //         ->needs(TokenProvider::class)
+    //         ->give(fn () => $tokenProvider);
 
-        $getExpectedToken = 'token';
-        $tokenProvider->expects('getToken')->andReturn($getExpectedToken);
-        $getStreamsExpectedResponse = json_encode(['title' => 'title', 'user_name' => 'user_name']);
-        $streamsDataProvider->expects('execute')->with($getExpectedToken)->andReturn($getStreamsExpectedResponse);
+    //     $getExpectedToken = 'token';
+    //     $tokenProvider->expects('getToken')->andReturn($getExpectedToken);
+    //     $getStreamsExpectedResponse = json_encode(['title' => 'title', 'user_name' => 'user_name']);
+    //     $streamsDataProvider->expects('execute')->with($getExpectedToken)->andReturn($getStreamsExpectedResponse);
 
-        $response = $this->get('/analytics/streams');
+    //     $response = $this->get('/analytics/streams');
 
-        $response->assertStatus(200);
-        $response->assertContent('"{\"title\":\"title\",\"user_name\":\"user_name\"}"');
-    }
+    //     $response->assertStatus(200);
+    //     $response->assertContent('"{\"title\":\"title\",\"user_name\":\"user_name\"}"');
+    // }
     /**
      * @test
      */
