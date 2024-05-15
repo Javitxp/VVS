@@ -19,7 +19,17 @@ class StreamsDataManager
      */
     public function getStreams()
     {
-        return $this->streamsDataProvider->execute($this->tokenProvider->getToken());
+        $streams = $this->streamsDataProvider->execute($this->tokenProvider->getToken());
+        $filteredStreams = [];
+        foreach ($streams as $stream) {
+            $filteredStream = [
+                'title' => $stream['title'],
+                'user_name' => $stream['user_name']
+            ];
+            $filteredStreams[] = $filteredStream;
+        }
+
+        return $filteredStreams;
     }
 
 }
