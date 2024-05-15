@@ -7,7 +7,7 @@ use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class StreamsController extends Controller
+class GetStreamsController extends Controller
 {
     private $streamsDataManager;
 

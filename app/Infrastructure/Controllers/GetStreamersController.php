@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use App\Services\StreamerDataManager;
 
-class StreamersController extends Controller
+class GetStreamersController extends Controller
 {
     private StreamerDataManager $streamerDataManager;
 

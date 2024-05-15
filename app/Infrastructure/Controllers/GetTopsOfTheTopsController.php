@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TopsOfTheTopsController extends Controller
+class GetTopsOfTheTopsController extends Controller
 {
     protected TopsOfTheTopsDataManager $topsOfTheTopsDataManager;
     public function __construct(TopsOfTheTopsDataManager $topsOfTheTopsDataManager)
