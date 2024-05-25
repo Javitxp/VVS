@@ -10,10 +10,10 @@ use Illuminate\Http\Request;
 
 class GetTopsOfTheTopsController extends Controller
 {
-    protected TopsOfTheTopsDataManager $topsOfTheTopsDataManager;
-    public function __construct(TopsOfTheTopsDataManager $topsOfTheTopsDataManager)
+    protected TopsOfTheTopsDataManager $topsDataManager;
+    public function __construct(TopsOfTheTopsDataManager $topsDataManager)
     {
-        $this->topsOfTheTopsDataManager = $topsOfTheTopsDataManager;
+        $this->topsDataManager = $topsDataManager;
     }
     /**
      * Handle the incoming request.
@@ -21,7 +21,7 @@ class GetTopsOfTheTopsController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            return response()->json($this->topsOfTheTopsDataManager->getTopsOfTheTops($request->input("since")));
+            return response()->json($this->topsDataManager->getTopsOfTheTops($request->input("since")));
         } catch (Exception $e) {
             $msg = match ($e->getCode()) {
                 ErrorCodes::TOKEN_500 => "No se puede establecer conexión con Twitch en este momento",

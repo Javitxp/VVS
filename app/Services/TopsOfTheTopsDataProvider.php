@@ -30,21 +30,21 @@ class TopsOfTheTopsDataProvider
         }
         $topsOfTheTops = [];
         foreach ($top3_games as $game) {
-            $id = $game["id"];
+            $game_id = $game["id"];
             $name = $game["name"];
-            $result = $this->dbClient->checkGameId($id);
+            $result = $this->dbClient->checkGameId($game_id);
             try {
-                $top40Videos = $this->apiClient->getTop40Videos($id, $headers);
+                $top40Videos = $this->apiClient->getTop40Videos($game_id, $headers);
             } catch (Exception $e) {
                 throw new Exception("Error: Code 500", ErrorCodes::TOP40VIDEOS_500);
             }
             if ($result) {
-                $json = isset($since) ? $this->dbClient->getSince($since, $id) : $this->dbClient->getLast10($id);
+                $json = isset($since) ? $this->dbClient->getSince($since, $game_id) : $this->dbClient->getLast10($game_id);
                 if ($json === null) {
-                    $json = $this->dbClient->updateGameTopsOfTheTops($id, $name, $top40Videos);
+                    $json = $this->dbClient->updateGameTopsOfTheTops($game_id, $name, $top40Videos);
                 }
             } else {
-                $json = $this->dbClient->getAndInsertGameTopsOfTheTops($id, $name, $top40Videos);
+                $json = $this->dbClient->getAndInsertGameTopsOfTheTops($game_id, $name, $top40Videos);
             }
             $topsOfTheTops[] = $json;
         }

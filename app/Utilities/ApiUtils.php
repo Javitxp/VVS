@@ -30,9 +30,9 @@ class ApiUtils
         }
     }
 
-    public function getTop40Videos($id)
+    public function getTop40Videos($gameId)
     {
-        $url = 'https://api.twitch.tv/helix/videos?game_id='.$id.'&first=40&sort=views';
+        $url = 'https://api.twitch.tv/helix/videos?game_id='.$gameId.'&first=40&sort=views';
         $apiClient = new ApiClient();
 
         $headers = [

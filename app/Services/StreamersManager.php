@@ -10,9 +10,9 @@ class StreamersManager
         $this->curlManager = $curlManager;
     }
 
-    public function getStreamers(String $id)
+    public function getStreamers(String $streamerId)
     {
-        $url = 'https://api.twitch.tv/helix/users?id='.$id;
+        $url = 'https://api.twitch.tv/helix/users?id='.$streamerId;
 
         $users = $this->curlManager->getCurlResponse($url);
 

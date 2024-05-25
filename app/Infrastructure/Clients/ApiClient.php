@@ -43,10 +43,9 @@ class ApiClient
 
         if (isset($jsonResponse['access_token'])) {
             return $jsonResponse['access_token'];
-        } else {
-            echo "No se pudo encontrar el access_token en la respuesta.";
-            exit;
         }
+        echo "No se pudo encontrar el access_token en la respuesta.";
+        exit;
     }
 
     /**
@@ -94,9 +93,9 @@ class ApiClient
     /**
      * @throws Exception
      */
-    public function getTop40Videos($id, $headers)
+    public function getTop40Videos($game_id, $headers)
     {
-        $url = 'https://api.twitch.tv/helix/videos?game_id='.$id.'&first=40&sort=views';
+        $url = 'https://api.twitch.tv/helix/videos?game_id='.$game_id.'&first=40&sort=views';
 
         $headers[] = 'Client-Id: ' . env("CLIENT_ID");
 

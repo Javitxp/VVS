@@ -138,12 +138,12 @@ class DBClient
         }
     }
 
-    public function getLast10($id)
+    public function getLast10($videoId)
     {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
-        $statement->bind_param("i", $id);
+        $statement->bind_param("i", $videoId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
@@ -154,12 +154,12 @@ class DBClient
         }
     }
 
-    public function getSince($seconds, $id)
+    public function getSince($seconds, $videoId)
     {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
-        $statement->bind_param("ii", $seconds, $id);
+        $statement->bind_param("ii", $seconds, $videoId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
@@ -170,13 +170,14 @@ class DBClient
         }
     }
 
-    public function checkGameId($id)
+    public function checkGameId($gameId)
     {
+        $count = 0;
         $conn = $this->connectToDB();
         try {
             $sql = "SELECT COUNT(*) FROM presentar WHERE ID = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $gameId);
             $stmt->execute();
             $stmt->bind_result($count);
             $stmt->fetch();
@@ -189,11 +190,11 @@ class DBClient
         }
     }
 
-    public function getAndInsertGame($id, $name)
+    public function getAndInsertGame($gameId, $name)
     {
         $apiController = new ApiUtils();
         $conn = $this->connectToDB();
-        $array = $apiController->getTop40Videos($id);
+        $array = $apiController->getTop40Videos($gameId);
         $topUser = $array[0];
         $user = $topUser["user_name"];
         $this->setNew40GamesInDB($array, $conn);
@@ -202,7 +203,7 @@ class DBClient
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,
@@ -217,7 +218,7 @@ class DBClient
         return $allData;
     }
 
-    public function getAndInsertGameTopsOfTheTops($id, $name, $top40Videos)
+    public function getAndInsertGameTopsOfTheTops($gameId, $name, $top40Videos)
     {
         $conn = $this->connectToDB();
         $topUser = $top40Videos[0];
@@ -228,7 +229,7 @@ class DBClient
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,
@@ -243,20 +244,20 @@ class DBClient
         return $allData;
     }
 
-    public function updateGame($id, $name)
+    public function updateGame($gameId, $name)
     {
         $apiController = new ApiUtils();
         $conn = $this->connectToDB();
         try {
             $sql = "DELETE FROM presentar WHERE id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $gameId);
             $stmt->execute();
             $stmt->close();
         } catch (Exception $e) {
             return;
         }
-        $array = $apiController->getTop40Videos($id);
+        $array = $apiController->getTop40Videos($gameId);
         $topUser = $array[0];
         $user = $topUser["user_name"];
         $this->setNew40GamesInDB($array, $conn);
@@ -265,7 +266,7 @@ class DBClient
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,
@@ -279,13 +280,13 @@ class DBClient
         $this->closeConnectionDB($conn);
         return $allData;
     }
-    public function updateGameTopsOfTheTops($id, $name, $top40Videos)
+    public function updateGameTopsOfTheTops($gameId, $name, $top40Videos)
     {
         $conn = $this->connectToDB();
         try {
             $sql = "DELETE FROM presentar WHERE id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $gameId);
             $stmt->execute();
             $stmt->close();
         } catch (Exception $e) {
@@ -299,7 +300,7 @@ class DBClient
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,

@@ -5,11 +5,11 @@ namespace App\Services;
 class TopsOfTheTopsDataManager
 {
     private TokenProvider $tokenProvider;
-    private TopsOfTheTopsDataProvider $topsOfTheTopsDataProvider;
-    public function __construct(TokenProvider $tokenProvider, TopsOfTheTopsDataProvider $topsOfTheTopsDataProvider)
+    private TopsOfTheTopsDataProvider $topsDataProvider;
+    public function __construct(TokenProvider $tokenProvider, TopsOfTheTopsDataProvider $topsDataProvider)
     {
         $this->tokenProvider = $tokenProvider;
-        $this->topsOfTheTopsDataProvider = $topsOfTheTopsDataProvider;
+        $this->topsDataProvider = $topsDataProvider;
     }
 
     /**
@@ -17,6 +17,6 @@ class TopsOfTheTopsDataManager
      */
     public function getTopsOfTheTops(String $since)
     {
-        return $this->topsOfTheTopsDataProvider->execute($this->tokenProvider->getToken(), $since);
+        return $this->topsDataProvider->execute($this->tokenProvider->getToken(), $since);
     }
 }
