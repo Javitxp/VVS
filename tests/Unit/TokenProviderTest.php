@@ -8,7 +8,7 @@ use App\Services\TokenProvider;
 use Mockery;
 use Tests\TestCase;
 
-class GetTokenTest extends TestCase
+class TokenProviderTest extends TestCase
 {
 
     private ApiClient $apiClientMock;
