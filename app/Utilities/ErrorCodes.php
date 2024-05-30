@@ -9,4 +9,7 @@ class ErrorCodes
     public const STREAMS_500 = 3;
     public const TOP3GAMES_500 = 4;
     public const TOP40VIDEOS_500 = 5;
+    public const USERS_400 = 6;
+    public const USERS_409 = 7;
+    public const USERS_500 = 8;
 }
