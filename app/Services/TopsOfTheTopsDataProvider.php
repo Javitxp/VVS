@@ -24,7 +24,7 @@ class TopsOfTheTopsDataProvider
     {
         $headers = array('Authorization: Bearer '. $token);
         try {
-            $top3_games = $this->apiClient->getTop3Games($headers);
+            $top3_games = json_decode($this->apiClient->getTop3Games($headers), true)['data'];
         } catch (Exception $e) {
             throw new Exception("Error: Code 500", ErrorCodes::TOP3GAMES_500);
         }
@@ -34,7 +34,7 @@ class TopsOfTheTopsDataProvider
             $name = $game["name"];
             $result = $this->dbClient->checkGameId($game_id);
             try {
-                $top40Videos = $this->apiClient->getTop40Videos($game_id, $headers);
+                $top40Videos = json_decode($this->apiClient->getTop40Videos($game_id, $headers), true)['data'];
             } catch (Exception $e) {
                 throw new Exception("Error: Code 500", ErrorCodes::TOP40VIDEOS_500);
             }

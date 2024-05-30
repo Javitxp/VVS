@@ -21,7 +21,7 @@ class GetTopsOfTheTopsController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            return response()->json($this->topsOfTheTopsDataManager->getTopsOfTheTops($request->input("since")));
+            return response()->json($this->topsOfTheTopsDataManager->getTopsOfTheTops($request->input("since", "")));
         } catch (Exception $exception) {
             $message = match ($exception->getCode()) {
                 ErrorCodes::TOKEN_500 => "No se puede establecer conexión con Twitch en este momento",
