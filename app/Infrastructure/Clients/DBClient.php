@@ -4,6 +4,7 @@ namespace App\Infrastructure\Clients;
 
 use App\Utilities\ApiUtils;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use mysqli;
 
 class DBClient
@@ -317,34 +318,21 @@ class DBClient
 
     public function getToken()
     {
-        $conn = $this->connectToDB();
-        $sql = "SELECT value FROM token;";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            return $row["value"];
-        } else {
-            return null;
-        }
+        $token = DB::table('token')->first();
+
+        return $token?->value;
     }
 
-    public function replaceToken(String $token)
+    public function replaceToken(String $value)
     {
-        $conn = $this->connectToDB();
-        $sql = "DELETE from token;";
-        $result = $conn->query($sql);
-        if($result === false) {
-            return false;
-        }
-        $sql = "INSERT into token (value) VALUES (?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $token);
-        $stmt->execute();
-        if ($stmt->affected_rows > 0) {
-            return true;
+        $token = DB::table('token')->first();
+
+        if (!$token) {
+            DB::table('token')->insert(['value' => $value]);
         } else {
-            return false;
+            DB::table('token')->where('id', $token->id)->update(['value' => $value]);
         }
+
     }
 
 }
