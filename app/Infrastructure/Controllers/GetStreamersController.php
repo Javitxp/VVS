@@ -24,13 +24,13 @@ class GetStreamersController extends Controller
     {
         try {
             return response()->json($this->streamerDataManager->getStreamerData($request->input("id")));
-        } catch (Exception $e) {
-            $msg = match ($e->getCode()) {
+        } catch (Exception $exception) {
+            $message = match ($exception->getCode()) {
                 ErrorCodes::TOKEN_500 => "No se puede establecer conexión con Twitch en este momento",
                 ErrorCodes::STREAMERS_500 => "No se pueden devolver streamers en este momento, inténtalo más tarde",
                 default => "Internal server error",
             };
-            return response()->json(['error' => $msg], 503);
+            return response()->json(['error' => $message], 503);
         }
 
     }

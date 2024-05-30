@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class GetStreamsController extends Controller
 {
-    private $streamsDataManager;
+    private StreamsDataManager $streamsDataManager;
 
     public function __construct(StreamsDataManager $streamsDataManager)
     {
@@ -23,19 +23,13 @@ class GetStreamsController extends Controller
     {
         try {
             return response()->json($this->streamsDataManager->getStreams());
-        } catch (Exception $e) {
-            switch ($e->getCode()) {
-                case ErrorCodes::TOKEN_500:
-                    $msg = "No se puede establecer conexión con Twitch en este momento";
-                    break;
-                case ErrorCodes::STREAMS_500:
-                    $msg = "No se pueden devolver streams en este momento, inténtalo más tarde";
-                    break;
-                default:
-                    $msg = "Internal server error";
-                    break;
-            }
-            return response()->json(['error' => $msg], 503);
+        } catch (Exception $exception) {
+            $message = match ($exception->getCode()) {
+                ErrorCodes::TOKEN_500 => "No se puede establecer conexión con Twitch en este momento",
+                ErrorCodes::STREAMS_500 => "No se pueden devolver streams en este momento, inténtalo más tarde",
+                default => "Internal server error",
+            };
+            return response()->json(['error' => $message], 503);
         }
     }
 }
