@@ -20,4 +20,11 @@ class UserDataManager
     {
         return $this->userDataProvider->createUser($username, $password);
     }
+    /**
+     * @throws Exception
+     */
+    public function getAllUsers()
+    {
+        return $this->userDataProvider->getAllUsers();
+    }
 }

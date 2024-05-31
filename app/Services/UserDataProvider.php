@@ -31,5 +31,16 @@ class UserDataProvider
             throw new Exception("Error al crear el usuario.", ErrorCodes::USERS_500);
         }
     }
+    /**
+     * @throws Exception
+     */
+    public function getAllUsers()
+    {
+        try {
+            return RegistredUser::all(['username', 'followedStreamers']);
+        } catch (Exception $e) {
+            throw new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500);
+        }
+    }
 }
 
