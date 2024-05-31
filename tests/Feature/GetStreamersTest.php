@@ -39,9 +39,12 @@ class GetStreamersTest extends TestCase
      */
     public function ErrorWhenFailInGettingToken(): void
     {
-        $userDataManagerMock = $this->mock(StreamerDataManager::class);
-        $userDataManagerMock->shouldReceive('getStreamerData')
-            ->andThrow(new Exception("No se puede establecer conexión con Twitch en este momento", ErrorCodes::TOKEN_500));
+        $apiClient = Mockery::mock(ApiClient::class);
+        $dbClient = Mockery::mock(DBClient::class);
+        $dbClient->expects('getToken')
+            ->andThrow(new Exception("Error 500", ErrorCodes::TOKEN_500));
+        $this->app->instance(ApiClient::class, $apiClient);
+        $this->app->instance(DBClient::class, $dbClient);
 
         $response = $this->get('/analytics/streamers?id=69');
 
@@ -53,9 +56,18 @@ class GetStreamersTest extends TestCase
      */
     public function ErrorWhenFailInGettingStreamers(): void
     {
-        $userDataManagerMock = $this->mock(StreamerDataManager::class);
-        $userDataManagerMock->shouldReceive('getStreamerData')
-            ->andThrow(new Exception("No se pueden devolver streamers en este momento, inténtalo más tarde", ErrorCodes::STREAMERS_500));
+        $apiClient = Mockery::mock(ApiClient::class);
+        $dbClient = Mockery::mock(DBClient::class);
+        $token = 'token';
+        $streamerId = 69;
+        $dbClient->expects('getToken')
+            ->andReturn($token);
+        $headers = ['Authorization: Bearer '. $token];
+        $apiClient->expects('makeCurlCall')
+            ->with('https://api.twitch.tv/helix/users?id='.$streamerId, $headers)
+            ->andThrow(new Exception("Error 500", ErrorCodes::STREAMERS_500));
+        $this->app->instance(ApiClient::class, $apiClient);
+        $this->app->instance(DBClient::class, $dbClient);
 
         $response = $this->get('/analytics/streamers?id=69');
 

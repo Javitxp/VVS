@@ -5,8 +5,6 @@ namespace Tests\Feature;
 use App\Infrastructure\Clients\ApiClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Services\StreamsDataManager;
-use App\Services\StreamsDataProvider;
-use App\Services\TokenProvider;
 use App\Utilities\ErrorCodes;
 use Exception;
 use Mockery;
@@ -41,9 +39,11 @@ class GetStreamsTest extends TestCase
      */
     public function ErrorIfFailInGettingToken(): void
     {
-        $streamsDataManagerMock = $this->mock(StreamsDataManager::class);
-        $streamsDataManagerMock->shouldReceive('getStreams')
-            ->andThrow(new Exception("No se puede establecer conexión con Twitch en este momento", ErrorCodes::TOKEN_500));
+        $apiClient = Mockery::mock(ApiClient::class);
+        $dbClient = Mockery::mock(DBClient::class);
+        $dbClient->expects('getToken')->andThrow(new Exception("Error 500", ErrorCodes::TOKEN_500));
+        $this->app->instance(ApiClient::class, $apiClient);
+        $this->app->instance(DBClient::class, $dbClient);
 
         $response = $this->get('/analytics/streams');
 
@@ -56,9 +56,17 @@ class GetStreamsTest extends TestCase
      */
     public function ErrorIfFailInGettingStreams(): void
     {
-        $streamsDataManagerMock = $this->mock(StreamsDataManager::class);
-        $streamsDataManagerMock->shouldReceive('getStreams')
-            ->andThrow(new Exception("No se pueden devolver streams en este momento, inténtalo más tarde", ErrorCodes::STREAMS_500));
+        $apiClient = Mockery::mock(ApiClient::class);
+        $dbClient = Mockery::mock(DBClient::class);
+        $token = 'token';
+        $dbClient->expects('getToken')
+            ->andReturn($token);
+        $headers = ['Authorization: Bearer '. $token];
+        $apiClient->expects('makeCurlCall')
+            ->with('https://api.twitch.tv/helix/streams', $headers)
+            ->andThrow(new Exception("Error 500", ErrorCodes::STREAMS_500));
+        $this->app->instance(ApiClient::class, $apiClient);
+        $this->app->instance(DBClient::class, $dbClient);
 
         $response = $this->get('/analytics/streams');
 
