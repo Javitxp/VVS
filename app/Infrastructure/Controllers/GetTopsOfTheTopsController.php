@@ -2,11 +2,11 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Infrastructure\Requests\GetTopsOfTheTopsRequest;
 use App\Services\TopsOfTheTopsDataManager;
 use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class GetTopsOfTheTopsController extends Controller
 {
@@ -18,7 +18,7 @@ class GetTopsOfTheTopsController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(GetTopsOfTheTopsRequest $request): JsonResponse
     {
         try {
             return response()->json($this->topsOfTheTopsDataManager->getTopsOfTheTops($request->input("since", "")));
