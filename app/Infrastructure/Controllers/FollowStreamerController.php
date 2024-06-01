@@ -38,7 +38,7 @@ class FollowStreamerController extends Controller
             );
             return response()->json([
                 'message' => 'Ahora sigues a '. $streamerId
-            ], 201);
+            ], 200);
 
         } catch (Exception $exception) {
             $message = match ($exception->getCode()) {

@@ -19,7 +19,7 @@ class GetUsersTest extends TestCase
         ]);
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
 
-        $response = $this->get('/analytics/userlist');
+        $response = $this->get('/analytics/users');
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -37,7 +37,7 @@ class GetUsersTest extends TestCase
             ->andThrow(new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500));
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
 
-        $response = $this->get('/analytics/userlist');
+        $response = $this->get('/analytics/users');
 
         $response->assertStatus(500);
         $response->assertJson(['error' => 'Error del servidor al obtener la lista de usuarios.']);

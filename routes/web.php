@@ -18,6 +18,6 @@ Route::get('/analytics/streamers', GetStreamersController::class);
 Route::get('/analytics/streams', GetStreamsController::class);
 Route::get('/analytics/topsofthetops', GetTopsOfTheTopsController::class);
 Route::post('/analytics/users', CreateUserController::class);
-Route::get('analytics/userlist', GetUsersController::class);
+Route::get('analytics/users', GetUsersController::class);
 Route::get('/analytics/timeline/{userId}', GetTimelineController::class);
 Route::post('/analytics/follow', FollowStreamerController::class);

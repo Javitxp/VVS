@@ -14,4 +14,9 @@ class ErrorCodes
     public const USERS_500 = 8;
     public const TIMELINE_500 = 9;
     public const TIMELINE_404 = 10;
+    public const FOLLOW_404 = 11;
+    public const USERS_404 = 12;
+    public const STREAMERS_404 = 0;
+    public const FOLLOW_409 = 14;
+
 }

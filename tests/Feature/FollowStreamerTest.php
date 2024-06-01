@@ -35,7 +35,7 @@ class FollowStreamerTest extends TestCase
 
         $response = $this->post('analytics/follow', ['userId' => $userId, 'streamerId' => $streamerId]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(200);
         $response->assertJson([
             'message' => 'Ahora sigues a '. $streamerId
         ]);
