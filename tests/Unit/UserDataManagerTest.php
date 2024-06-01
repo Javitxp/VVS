@@ -49,4 +49,83 @@ class UserDataManagerTest extends TestCase
 
         $this->assertEquals($newUserList, $userList);
     }
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function GetsTimeline()
+    {
+        $userId = "1";
+        $timeline = [
+            0 =>
+                [
+                    "streamerId" => "streamer1",
+                    "streamerName" => "Streamer 1",
+                    "title" => "Stream 1",
+                    "game" => "Game 1",
+                    "viewerCount" => 100,
+                    "startedAt" => "2024-05-10T12:00:00Z"
+                ],
+            1 =>
+                [
+                    "streamerId" => "streamer1",
+                    "streamerName" => "Streamer 1",
+                    "title" => "Stream 2",
+                    "game" => "Game 2",
+                    "viewerCount" => 100,
+                    "startedAt" => "2024-05-10T12:00:00Z"
+                ],
+            2 =>
+                [
+                    "streamerId" => "streamer1",
+                    "streamerName" => "Streamer 1",
+                    "title" => "Stream 3",
+                    "game" => "Game 3",
+                    "viewerCount" => 100,
+                    "startedAt" => "2024-05-10T12:00:00Z"
+                ],
+            3 =>
+                [
+                    "streamerId" => "streamer1",
+                    "streamerName" => "Streamer 1",
+                    "title" => "Stream 2",
+                    "game" => "Game 2",
+                    "viewerCount" => 100,
+                    "startedAt" => "2024-05-10T12:00:00Z"
+                ],
+            4 =>
+                [
+                    "streamerId" => "streamer1",
+                    "streamerName" => "Streamer 1",
+                    "title" => "Stream 2",
+                    "game" => "Game 2",
+                    "viewerCount" => 100,
+                    "startedAt" => "2024-05-10T12:00:00Z"
+                ],
+        ];
+        $this->userDataProviderMock->expects('getUserFollowedStreamersTimeline')
+            ->with($userId)
+            ->andReturn($timeline);
+
+        $newTimeline = $this->userDataManager->getUserFollowedStreamersTimeline($userId);
+
+        $this->assertEquals($newTimeline, $timeline);
+    }
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function FollowsStreamer()
+    {
+        $userId = "1";
+        $streamerId = "1";
+        $user = new RegistredUser();
+        $this->userDataProviderMock->expects('followStreamer')
+            ->with($userId, $streamerId)
+            ->andReturn($user);
+
+        $newUser = $this->userDataManager->followStreamer($userId, $streamerId);
+
+        $this->assertEquals($newUser, $user);
+    }
 }
