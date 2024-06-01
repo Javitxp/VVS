@@ -12,4 +12,6 @@ class ErrorCodes
     public const USERS_400 = 6;
     public const USERS_409 = 7;
     public const USERS_500 = 8;
+    const TIMELINE_500 = 9;
+    const TIMELINE_404 = 10;
 }

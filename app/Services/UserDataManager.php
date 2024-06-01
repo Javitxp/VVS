@@ -27,4 +27,11 @@ class UserDataManager
     {
         return $this->userDataProvider->getAllUsers();
     }
+    /**
+     * @throws Exception
+     */
+    public function getUserFollowedStreamersTimeline($userId)
+    {
+        return $this->userDataProvider->getUserFollowedStreamersTimeline($userId);
+    }
 }
