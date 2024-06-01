@@ -38,7 +38,13 @@ class CreateUserController extends Controller
                 ErrorCodes::USERS_500 => "Error del servidor al crear el usuario.",
                 default => "Internal server error",
             };
-            return response()->json(['error' => $message], 503);
+            $status = match ($exception->getCode()) {
+                ErrorCodes::USERS_400 => 400,
+                ErrorCodes::USERS_409 => 409,
+                ErrorCodes::USERS_500 => 500,
+                default => 503,
+            };
+            return response()->json(['error' => $message], $status);
         }
     }
 }
