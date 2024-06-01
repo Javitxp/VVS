@@ -80,11 +80,21 @@ class UserDataProvider
                 throw new Exception("Error al obtener los streams de Twitch.", ErrorCodes::TIMELINE_500);
             }
 
-            $streams = array_merge($streams, $response->json('data'));
+            $data = $response->json('data');
+            foreach ($data as $stream) {
+                $streams[] = [
+                    'streamerId' => $stream['user_id'],
+                    'streamerName' => $stream['user_name'],
+                    'title' => $stream['title'],
+                    'game' => $stream['game_name'],
+                    'viewerCount' => $stream['viewer_count'],
+                    'startedAt' => $stream['started_at']
+                ];
+            }
         }
 
         usort($streams, function ($first, $second) {
-            return strtotime($second['started_at']) - strtotime($first['started_at']);
+            return strtotime($second['startedAt']) - strtotime($first['startedAt']);
         });
 
         return array_slice($streams, 0, 5);
