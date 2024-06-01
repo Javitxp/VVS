@@ -7,6 +7,7 @@ use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class UserDataProvider
 {
@@ -38,7 +39,8 @@ class UserDataProvider
     public function getAllUsers()
     {
         try {
-            return RegistredUser::all(['username', 'followedStreamers']);
+            $users = RegistredUser::select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))->get();
+            return $users;
         } catch (Exception $e) {
             throw new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500);
         }
