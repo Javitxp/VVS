@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Services\UserDataManager;
+use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -22,11 +23,11 @@ class GetTimelineController extends Controller
         try {
             $timeline = $this->userDataManager->getUserFollowedStreamersTimeline($userId);
             return response()->json($timeline);
-        } catch (Exception $e) {
-            if ($e->getCode() == 404) {
-                return response()->json(['message' => $e->getMessage()], 404);
+        } catch (Exception $exception) {
+            if ($exception->getCode() === ErrorCodes::TIMELINE_404) {
+                return response()->json(['error' => $exception->getMessage()], 404);
             } else {
-                return response()->json(['message' => $e->getMessage()], 500);
+                return response()->json(['error' => $exception->getMessage()], 500);
             }
         }
     }
