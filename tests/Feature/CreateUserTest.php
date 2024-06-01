@@ -103,7 +103,7 @@ class CreateUserTest extends TestCase
     /**
      * @test
      */
-    public function ReturnsServerErrorWhenExceptionOccurs()
+    public function ReturnsServerErrorWhenFailInCreateUser()
     {
 
         $userDataManagerMock = Mockery::mock(UserDataManager::class);
@@ -111,7 +111,7 @@ class CreateUserTest extends TestCase
             ->andThrow(new Exception("Error del servidor al crear el usuario.", ErrorCodes::USERS_500));
         $this->app->instance(UserDataManager::class, $userDataManagerMock);
 
-
+        
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
