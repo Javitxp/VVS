@@ -41,7 +41,6 @@ class FollowStreamerController extends Controller
             ], 201);
 
         } catch (Exception $exception) {
-            echo('error es: '.$exception->getCode());
             $message = match ($exception->getCode()) {
                 ErrorCodes::USERS_400 => "Los parámetros requeridos (username y password) no fueron proporcionados.",
                 ErrorCodes::USERS_404 => "El usuario ( ".$userId." ) especificado no existe en la API.",
