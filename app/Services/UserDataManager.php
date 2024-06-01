@@ -41,4 +41,8 @@ class UserDataManager
     {
         return $this->userDataProvider->followStreamer($userId, $streamerId);
     }
+    public function unfollowStreamer($userId, $streamerId)
+    {
+        return $this->userDataProvider->unfollowStreamer($userId, $streamerId); //TODO
+    }
 }
