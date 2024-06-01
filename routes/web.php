@@ -2,6 +2,7 @@
 
 
 use App\Infrastructure\Controllers\CreateUserController;
+use App\Infrastructure\Controllers\FollowStreamerController;
 use App\Infrastructure\Controllers\GetStreamersController;
 use App\Infrastructure\Controllers\GetStreamsController;
 use App\Infrastructure\Controllers\GetTimelineController;
@@ -19,3 +20,4 @@ Route::get('/analytics/topsofthetops', GetTopsOfTheTopsController::class);
 Route::post('/analytics/users', CreateUserController::class);
 Route::get('analytics/userlist', GetUsersController::class);
 Route::get('/analytics/timeline/{userId}', GetTimelineController::class);
+Route::post('/analytics/follow', FollowStreamerController::class);

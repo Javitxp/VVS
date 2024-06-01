@@ -87,4 +87,34 @@ class UserDataProvider
 
         return array_slice($streams, 0, 5);
     }
+    /**
+     * @throws Exception
+     */
+    public function followStreamer($userId, $streamerId)
+    {
+        // Verificar si el usuario ya existe
+
+        if (RegistredUser::where('id', $userId)->exists()) {
+            try {
+                $user = RegistredUser::where('id', $userId)->firstOrFail();
+
+                $followedStreamers = json_decode($user->followedStreamers, true) ?? [];
+
+                if (in_array($streamerId, $followedStreamers)) {
+                    throw new Exception("409 Conflict : El usuario ya está siguiendo al streamer.", ErrorCodes::FOLLOW_409);
+                }
+
+                $followedStreamers[] = $streamerId;
+                $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
+
+                $user->save();
+                return $user;
+
+            } catch (Exception $e) {
+                throw new Exception("409 Conflict : El usuario ya está siguiendo al streamer.", ErrorCodes::FOLLOW_409);
+            }
+        } else {
+            throw new Exception("El usuario (  ) NO EXISTE", ErrorCodes::USERS_404);
+        }
+    }
 }

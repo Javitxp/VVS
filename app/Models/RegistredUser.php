@@ -24,7 +24,6 @@ class RegistredUser extends Model
         'password',
     ];
 
-    // Los campos que son de tipo JSON
     protected $casts = [
         'followedStreamers' => 'array',
     ];
