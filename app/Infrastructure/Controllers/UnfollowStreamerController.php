@@ -41,8 +41,8 @@ class UnfollowStreamerController extends Controller
 
         } catch (Exception $exception) {
             $message = match ($exception->getCode()) {
-                ErrorCodes::USERS_404 => "Placeholder: El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " )",
-                default => "Internal Server Error : Error del servidor al seguir al streamer.",
+                ErrorCodes::USERS_404 => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " )",
+                default => "Internal Server Error : Error del servidor al dejar de seguir al streamer.",
             };
             $status = match ($exception->getCode()) {
                 ErrorCodes::USERS_404 => 404,
