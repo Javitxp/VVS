@@ -22,4 +22,4 @@ Route::post('/analytics/users', CreateUserController::class);
 Route::get('analytics/userlist', GetUsersController::class);
 Route::get('/analytics/timeline/{userId}', GetTimelineController::class);
 Route::post('/analytics/follow', FollowStreamerController::class);
-Route::post('/analytics/unfollow', UnfollowStreamerController::class);
+Route::delete('/analytics/unfollow', UnfollowStreamerController::class);
