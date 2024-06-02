@@ -3,6 +3,7 @@
 
 use App\Infrastructure\Controllers\CreateUserController;
 use App\Infrastructure\Controllers\FollowStreamerController;
+use App\Infrastructure\Controllers\UnfollowStreamerController;
 use App\Infrastructure\Controllers\GetStreamersController;
 use App\Infrastructure\Controllers\GetStreamsController;
 use App\Infrastructure\Controllers\GetTimelineController;
@@ -21,3 +22,4 @@ Route::post('/analytics/users', CreateUserController::class);
 Route::get('analytics/users', GetUsersController::class);
 Route::get('/analytics/timeline/{userId}', GetTimelineController::class);
 Route::post('/analytics/follow', FollowStreamerController::class);
+Route::delete('/analytics/unfollow', UnfollowStreamerController::class);

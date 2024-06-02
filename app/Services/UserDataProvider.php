@@ -128,4 +128,28 @@ class UserDataProvider
             throw new Exception("El usuario (  ) NO EXISTE", ErrorCodes::USERS_404);
         }
     }
+    public function unfollowStreamer($userId, $streamerId)
+    {
+        if (!RegistredUser::where('id', $userId)->exists()) {
+            throw new Exception("El usuario ( " . $userId . " ) NO EXISTE", ErrorCodes::USERS_404);
+        }
+        try {
+            $user = RegistredUser::where('id', $userId)->firstOrFail();
+            $followedStreamers = json_decode($user->followedStreamers, true) ?? [];
+
+            if (!in_array($streamerId, $followedStreamers)) {
+                throw new Exception("El usuario no está siguiendo al streamer", 500);
+            }
+
+            $followedStreamers = array_filter($followedStreamers, function ($followedId) use ($streamerId) {
+                return $followedId !== $streamerId;
+            });
+
+            $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
+            $user->save();
+            return $user;
+        } catch (Exception $e) {
+            throw new Exception("Error del servidor al dejar de seguir al streamer.", 500);
+        }
+    }
 }

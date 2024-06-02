@@ -23,6 +23,11 @@ class StreamerDataProvider
         $url = 'https://api.twitch.tv/helix/users?id='.$streamerId;
         try {
             $response = $this->apiClient->makeCurlCall($url, $headers);
+
+            $decResponse = json_decode($response, true);
+            if (isset($decResponse['data']) && is_array($decResponse['data']) && empty($decResponse['data'])) {
+                throw new Exception("No Streamer", ErrorCodes::STREAMERS_404);
+            }
         } catch (Exception $e) {
             throw new Exception("Error: Code 500", ErrorCodes::STREAMERS_500);
         }
