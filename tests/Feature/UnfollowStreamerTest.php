@@ -41,7 +41,7 @@ class UnfollowStreamerTest extends TestCase
         $response = $this->delete('analytics/unfollow', ['userId' => $userId, 'streamerId' => $streamerId]);
         $response->assertStatus(404);
         $response->assertJson([
-            "error" => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " )",
+            "error" => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " ) especificado no existe en la API.",
         ]);
     }
     /**
