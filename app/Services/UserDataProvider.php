@@ -49,7 +49,7 @@ class UserDataProvider
     /**
      * @throws Exception
      */
-    public function getUserFollowedStreamersTimeline($userId)
+    public function getUserFollowedStreamersTimeline($token, $userId)
     {
         $user = RegistredUser::find($userId);
 
@@ -64,14 +64,13 @@ class UserDataProvider
         }
 
         $clientId = ENV('CLIENT_ID');
-        $accessToken = ENV('ACCESS_TOKEN');
 
         $streams = [];
 
         foreach (array_chunk($followedStreamers, 100) as $chunk) {
             $response = Http::withHeaders([
                 'Client-Id' => $clientId,
-                'Authorization' => "Bearer $accessToken",
+                'Authorization' => "Bearer $token",
             ])->get('https://api.twitch.tv/helix/streams', [
                 'user_id' => $chunk,
             ]);

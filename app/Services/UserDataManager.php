@@ -7,10 +7,12 @@ use Exception;
 class UserDataManager
 {
     private UserDataProvider $userDataProvider;
+    private TokenProvider $tokenProvider;
 
-    public function __construct(UserDataProvider $userDataProvider)
+    public function __construct(UserDataProvider $userDataProvider, TokenProvider $tokenProvider)
     {
         $this->userDataProvider = $userDataProvider;
+        $this->tokenProvider = $tokenProvider;
     }
 
     /**
@@ -32,7 +34,7 @@ class UserDataManager
      */
     public function getUserFollowedStreamersTimeline($userId)
     {
-        return $this->userDataProvider->getUserFollowedStreamersTimeline($userId);
+        return $this->userDataProvider->getUserFollowedStreamersTimeline($this->tokenProvider->getToken(), $userId);
     }
     /**
      * @throws Exception

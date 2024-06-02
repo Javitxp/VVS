@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\RegistredUser;
+use App\Services\TokenProvider;
 use App\Services\UserDataManager;
 use App\Services\UserDataProvider;
 use Tests\TestCase;
@@ -10,8 +11,9 @@ class UserDataManagerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->tokenProviderMock = Mockery::mock(TokenProvider::class);
         $this->userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $this->userDataManager = new UserDataManager($this->userDataProviderMock);
+        $this->userDataManager = new UserDataManager($this->userDataProviderMock, $this->tokenProviderMock);
     }
 
     /**
@@ -55,6 +57,7 @@ class UserDataManagerTest extends TestCase
      */
     public function GetsTimeline()
     {
+        $expectedToken = 'token';
         $userId = "1";
         $timeline = [
             0 =>
@@ -103,8 +106,10 @@ class UserDataManagerTest extends TestCase
                     "startedAt" => "2024-05-10T12:00:00Z"
                 ],
         ];
+        $this->tokenProviderMock->expects('getToken')
+            ->andReturn($expectedToken);
         $this->userDataProviderMock->expects('getUserFollowedStreamersTimeline')
-            ->with($userId)
+            ->with($expectedToken, $userId)
             ->andReturn($timeline);
 
         $newTimeline = $this->userDataManager->getUserFollowedStreamersTimeline($userId);

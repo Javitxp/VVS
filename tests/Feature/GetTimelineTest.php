@@ -1,8 +1,10 @@
 <?php
 
+use App\Services\TokenProvider;
 use App\Services\UserDataProvider;
 use App\Utilities\ErrorCodes;
 use Tests\TestCase;
+use Exception;
 
 class GetTimelineTest extends TestCase
 {
@@ -12,9 +14,13 @@ class GetTimelineTest extends TestCase
     public function GetsTimeline()
     {
         $userId = "1";
+        $expectedToken = 'token';
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
+        $tokenProviderMock = Mockery::mock(TokenProvider::class);
+        $tokenProviderMock->expects('getToken')
+            ->andReturn($expectedToken);
         $userDataProviderMock->expects('getUserFollowedStreamersTimeline')
-            ->with($userId)
+            ->with($expectedToken, $userId)
             ->andReturn([
                 0 =>
                 [
@@ -63,6 +69,7 @@ class GetTimelineTest extends TestCase
                     ],
             ]);
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
+        $this->app->instance(TokenProvider::class, $tokenProviderMock);
 
         $response = $this->get('/analytics/timeline/'.$userId);
 
@@ -121,11 +128,16 @@ class GetTimelineTest extends TestCase
     public function ReturnsFileNotFoundWhenCallingWithANonExistentUser()
     {
         $userId = "1";
+        $expectedToken = 'token';
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
+        $tokenProviderMock = Mockery::mock(TokenProvider::class);
+        $tokenProviderMock->expects('getToken')
+            ->andReturn($expectedToken);
         $userDataProviderMock->expects('getUserFollowedStreamersTimeline')
-            ->with($userId)
+            ->with($expectedToken, $userId)
             ->andThrow(new Exception("El usuario especificado no existe.", ErrorCodes::TIMELINE_404));
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
+        $this->app->instance(TokenProvider::class, $tokenProviderMock);
 
         $response = $this->get('/analytics/timeline/'.$userId);
 
@@ -138,11 +150,16 @@ class GetTimelineTest extends TestCase
     public function ReturnsServerErrorWhenCallFails()
     {
         $userId = "1";
+        $expectedToken = 'token';
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
+        $tokenProviderMock = Mockery::mock(TokenProvider::class);
+        $tokenProviderMock->expects('getToken')
+            ->andReturn($expectedToken);
         $userDataProviderMock->expects('getUserFollowedStreamersTimeline')
-            ->with($userId)
+            ->with($expectedToken, $userId)
             ->andThrow(new Exception("Error al obtener los streams de Twitch.", ErrorCodes::TIMELINE_500));
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
+        $this->app->instance(TokenProvider::class, $tokenProviderMock);
 
         $response = $this->get('/analytics/timeline/'.$userId);
 
