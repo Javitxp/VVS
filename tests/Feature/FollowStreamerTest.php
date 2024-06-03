@@ -67,7 +67,7 @@ class FollowStreamerTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertJson([
-            "error" => "El usuario ( $userId ) especificado no existe en la API."
+            "error" => "El usuario ( $userId ) o el streamer ( $streamerId ) especificados no existe en la API."
         ]);
     }
     /**

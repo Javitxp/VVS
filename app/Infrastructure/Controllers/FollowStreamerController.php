@@ -43,8 +43,8 @@ class FollowStreamerController extends Controller
         } catch (Exception $exception) {
             $message = match ($exception->getCode()) {
                 ErrorCodes::USERS_400 => "Los parámetros requeridos (username y password) no fueron proporcionados.",
-                ErrorCodes::USERS_404 => "El usuario ( ".$userId." ) especificado no existe en la API.",
-                ErrorCodes::STREAMERS_404 => "El streamer ( ".$streamerId." ) especificado no existe en la API.",
+                ErrorCodes::USERS_404 => "El usuario ( ".$userId." ) o el streamer ( ".$streamerId." ) especificados no existe en la API.",
+                ErrorCodes::STREAMERS_404 => "El usuario ( ".$userId." ) o el streamer ( ".$streamerId." ) especificados no existe en la API.",
                 ErrorCodes::FOLLOW_409 => "409 Conflict : El usuario ya está siguiendo al streamer.",
                 ErrorCodes::USERS_409 => "El nombre de usuario ya está en uso.",
                 ErrorCodes::USERS_500 => "Error del servidor al crear el usuario.",
