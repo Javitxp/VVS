@@ -18,11 +18,9 @@ class UnfollowStreamerTest extends TestCase
         $userId = "1";
         $streamerId = "1";
         $token = 'token';
-
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
         $tokenProviderMock = Mockery::mock(TokenProvider::class);
         $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-
         $userDataProviderMock->expects('unfollowStreamer')
             ->with($userId, $streamerId)
             ->andReturn(new RegistredUser());
@@ -31,7 +29,6 @@ class UnfollowStreamerTest extends TestCase
         $strDataProviderMock->expects('getStreamerData')
             ->with($token, $streamerId)
             ->andReturn(['data']);
-
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
         $this->app->instance(TokenProvider::class, $tokenProviderMock);
         $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
@@ -51,16 +48,13 @@ class UnfollowStreamerTest extends TestCase
         $userId = "1";
         $streamerId = "1";
         $token = 'token';
-
         $tokenProviderMock = Mockery::mock(TokenProvider::class);
         $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-
         $tokenProviderMock->expects('getToken')
             ->andReturn($token);
         $strDataProviderMock->expects('getStreamerData')
             ->with($token, $streamerId)
             ->andThrow(new Exception("No streamer", ErrorCodes::STREAMERS_404));
-
         $this->app->instance(TokenProvider::class, $tokenProviderMock);
         $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
 
@@ -78,11 +72,9 @@ class UnfollowStreamerTest extends TestCase
         $userId = "1";
         $streamerId = "1";
         $token = 'token';
-
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
         $tokenProviderMock = Mockery::mock(TokenProvider::class);
         $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-
         $userDataProviderMock->expects('unfollowStreamer')
             ->with($userId, $streamerId)
             ->andThrow(new Exception("Error", ErrorCodes::USERS_404));
@@ -91,7 +83,6 @@ class UnfollowStreamerTest extends TestCase
         $strDataProviderMock->expects('getStreamerData')
             ->with($token, $streamerId)
             ->andReturn(['data']);
-
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
         $this->app->instance(TokenProvider::class, $tokenProviderMock);
         $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
@@ -111,11 +102,9 @@ class UnfollowStreamerTest extends TestCase
         $userId = "1";
         $streamerId = "1";
         $token = 'token';
-
         $userDataProviderMock = Mockery::mock(UserDataProvider::class);
         $tokenProviderMock = Mockery::mock(TokenProvider::class);
         $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-
         $userDataProviderMock->expects('unfollowStreamer')
             ->with($userId, $streamerId)
             ->andThrow(new Exception("Server Error", 500));
@@ -124,7 +113,6 @@ class UnfollowStreamerTest extends TestCase
         $strDataProviderMock->expects('getStreamerData')
             ->with($token, $streamerId)
             ->andReturn(['data']);
-
         $this->app->instance(UserDataProvider::class, $userDataProviderMock);
         $this->app->instance(TokenProvider::class, $tokenProviderMock);
         $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);

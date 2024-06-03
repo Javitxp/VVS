@@ -133,4 +133,21 @@ class UserDataManagerTest extends TestCase
 
         $this->assertEquals($newUser, $user);
     }
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function UnfollowsStreamer()
+    {
+        $userId = "1";
+        $streamerId = "1";
+        $user = new RegistredUser();
+        $this->userDataProviderMock->expects('unfollowStreamer')
+            ->with($userId, $streamerId)
+            ->andReturn($user);
+
+        $newUser = $this->userDataManager->unfollowStreamer($userId, $streamerId);
+
+        $this->assertEquals($newUser, $user);
+    }
 }
