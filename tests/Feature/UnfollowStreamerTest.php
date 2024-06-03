@@ -64,7 +64,8 @@ class UnfollowStreamerTest extends TestCase
         $response->assertJson([
             "error" => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " ) especificado no existe en la API.",
         ]);
-    }/**
+    }
+    /**
      * @test
      */
     public function WhenUserIsNotOnTheApiReturns404()
