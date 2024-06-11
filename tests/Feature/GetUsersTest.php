@@ -4,20 +4,28 @@ use App\Services\UserDataProvider;
 use App\Utilities\ErrorCodes;
 use Tests\TestCase;
 use Exception;
+use Mockery;
 
 class GetUsersTest extends TestCase
 {
+    protected UserDataProvider $userDataProviderMock;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->userDataProviderMock = Mockery::mock(UserDataProvider::class);
+        $this->app->instance(UserDataProvider::class, $this->userDataProviderMock);
+    }
+
     /**
      * @test
      */
     public function GetsUsers()
     {
-        $userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $userDataProviderMock->expects('getAllUsers')->andReturn([
+        $this->userDataProviderMock->expects('getAllUsers')->andReturn([
             "username" => "somename",
             "followedStreamers" => ["streamer1", "streamer2"]
         ]);
-        $this->app->instance(UserDataProvider::class, $userDataProviderMock);
 
         $response = $this->get('/analytics/users');
 
@@ -27,15 +35,14 @@ class GetUsersTest extends TestCase
             "followedStreamers" => ["streamer1", "streamer2"]
         ]);
     }
+
     /**
      * @test
      */
     public function ReturnsServerErrorWhenFailInGetUsers()
     {
-        $userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $userDataProviderMock->expects('getAllUsers')
+        $this->userDataProviderMock->expects('getAllUsers')
             ->andThrow(new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500));
-        $this->app->instance(UserDataProvider::class, $userDataProviderMock);
 
         $response = $this->get('/analytics/users');
 
