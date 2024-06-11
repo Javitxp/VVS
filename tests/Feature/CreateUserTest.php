@@ -1,3 +1,5 @@
+php
+Copiar código
 <?php
 
 use App\Services\UserDataManager;
@@ -8,27 +10,29 @@ use Mockery;
 
 class CreateUserTest extends TestCase
 {
+    protected UserDataManager $userDataManagerMock;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->userDataManagerMock = Mockery::mock(UserDataManager::class);
+        $this->app->instance(UserDataManager::class, $this->userDataManagerMock);
+    }
+
     /**
      * @test
      */
     public function CreatesUserSuccessfully()
     {
-
-        $userDataManagerMock = Mockery::mock(UserDataManager::class);
-        $userDataManagerMock->expects('createUser')->andReturn((object)[
+        $this->userDataManagerMock->expects('createUser')->andReturn((object)[
             'username' => 'nuevo_usuario',
         ]);
-        $this->app->instance(UserDataManager::class, $userDataManagerMock);
-
-
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
         ];
 
-
         $response = $this->postJson('/analytics/users', $userData);
-
 
         $response->assertStatus(201);
         $response->assertJson([
@@ -42,11 +46,6 @@ class CreateUserTest extends TestCase
      */
     public function ReturnsBadRequestWhenParametersAreMissing()
     {
-        // Mock del UserDataManager
-        $userDataManagerMock = Mockery::mock(UserDataManager::class);
-        $this->app->instance(UserDataManager::class, $userDataManagerMock);
-
-
         $userData = [
             'password' => 'nueva_contraseña'
         ];
@@ -56,7 +55,6 @@ class CreateUserTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['username']);
 
-
         $userData = [
             'username' => 'nuevo_usuario'
         ];
@@ -65,7 +63,6 @@ class CreateUserTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['password']);
-
 
         $userData = [];
 
@@ -80,21 +77,14 @@ class CreateUserTest extends TestCase
      */
     public function ReturnsConflictWhenUsernameIsTaken()
     {
-
-        $userDataManagerMock = Mockery::mock(UserDataManager::class);
-        $userDataManagerMock->expects('createUser')
+        $this->userDataManagerMock->expects('createUser')
             ->andThrow(new Exception("El nombre de usuario ya está en uso.", ErrorCodes::USERS_409));
-        $this->app->instance(UserDataManager::class, $userDataManagerMock);
-
-
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
         ];
 
-
         $response = $this->postJson('/analytics/users', $userData);
-
 
         $response->assertStatus(409);
         $response->assertJson(['error' => 'El nombre de usuario ya está en uso.']);
@@ -105,21 +95,14 @@ class CreateUserTest extends TestCase
      */
     public function ReturnsServerErrorWhenFailInCreateUser()
     {
-
-        $userDataManagerMock = Mockery::mock(UserDataManager::class);
-        $userDataManagerMock->expects('createUser')
+        $this->userDataManagerMock->expects('createUser')
             ->andThrow(new Exception("Error del servidor al crear el usuario.", ErrorCodes::USERS_500));
-        $this->app->instance(UserDataManager::class, $userDataManagerMock);
-
-        
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
         ];
 
-
         $response = $this->postJson('/analytics/users', $userData);
-
 
         $response->assertStatus(500);
         $response->assertJson(['error' => 'Error del servidor al crear el usuario.']);
