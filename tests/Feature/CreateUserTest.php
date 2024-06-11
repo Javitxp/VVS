@@ -1,5 +1,3 @@
-php
-Copiar código
 <?php
 
 use App\Services\UserDataManager;
