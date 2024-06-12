@@ -47,7 +47,7 @@ jobs:
         ruleset: phpmd.xml
         
     - name: Run PHPCS Fixer
-      uses: tituspete/php-cs-fixer@v2
+      uses: grumpy/php-cs-fixer@v2
       with:
         args: |-
           --config .php-cs-fixer.dist.php
