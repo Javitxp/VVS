@@ -33,25 +33,13 @@ jobs:
       run: |
         mkdir -p database
         touch database/database.sqlite
-        
-    - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
-      run: php artisan test
-      
-    - name: Run PHPMD
-      uses: php-actions/phpmd@v1
-      with:
-        path: src
-        ruleset: phpmd.xml
-        
-    - name: Run PHPCS Fixer
-      uses: OskarStark/php-cs-fixer-ga@latest
-      with:
-        working_directory: app  # Ruta actualizada a "app"
-        config_file: .php-cs-fixer.dist.php
-        allow_risky: false
-        verbosity: true
-        extensions: php
+
+    - name: Run GrumPHP
+      run: vendor/bin/grumphp run
+
+    - name: Run PHPUnit
+      run: vendor/bin/phpunit
+
+    - name: Run PHP CS Fixer
+      run: vendor/bin/php-cs-fixer fix --diff --dry-run --config=.php-cs-fixer.dist.php
     
