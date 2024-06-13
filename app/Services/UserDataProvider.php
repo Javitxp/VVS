@@ -33,7 +33,7 @@ class UserDataProvider
             $user->username = $username;
             $user->password = Hash::make($password);
             $user->followedStreamers = json_encode([]);
-            $user->save();
+            $this->dbClient->insertUser($username, Hash::make($password), json_encode([]));
 
             return $user;
         } catch (Exception $e) {

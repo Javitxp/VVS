@@ -347,12 +347,24 @@ class DBClient
             $stmt->bind_result($count);
             $stmt->fetch();
             $stmt->close();
-
             return $count > 0;
         } catch (Exception $e) {
-            echo "Error al verificar el nombre de usuario: " . $e->getMessage();
             return false;
         }
+    }
+
+    public function insertUser($username, $password, $followedStreamers)
+    {
+        $conn = $this->connectToDB();
+        $sql = "INSERT INTO registredUsers (username, password, followedStreamers) VALUES (?,?,?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $username, $password, $followedStreamers);
+        if (!$stmt->execute()) {
+            $this->closeConnectionAndExitDB($conn);
+            throw new Exception("Error al insertar el usuario.");
+        }
+        $stmt->close();
+        return true;
     }
 
 }
