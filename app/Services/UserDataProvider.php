@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Infrastructure\Clients\DBClient;
 use App\Models\RegistredUser;
 use App\Utilities\ErrorCodes;
 use Exception;
@@ -11,13 +12,19 @@ use Illuminate\Support\Facades\DB;
 
 class UserDataProvider
 {
+    private DBClient $dbClient;
+    public function __construct(DBClient $dbClient)
+    {
+        $this->dbClient = $dbClient;
+    }
+
     /**
      * @throws Exception
      */
     public function createUser($username, $password)
     {
         // Verificar si el usuario ya existe
-        if (RegistredUser::where('username', $username)->exists()) {
+        if($this->dbClient->checkUsername($username)) {
             throw new Exception("El nombre de usuario ya está en uso.", ErrorCodes::USERS_409);
         }
 
