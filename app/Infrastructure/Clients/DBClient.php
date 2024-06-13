@@ -367,4 +367,44 @@ class DBClient
         return true;
     }
 
+    public function getAllUsers()
+    {
+        try {
+            $users = DB::table('registredUsers')
+                ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
+                ->get();
+            return $users;
+        } catch (Exception $e) {
+            throw new Exception("Error al obtener la lista de usuarios.", 500);
+        }
+    }
+
+    public function findUserById($userId)
+    {
+        $conn = $this->connectToDB();
+        $sql = "SELECT * FROM registredUsers WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
+    }
+
+
+
+    public function updateUserFollowedStreamers($userId, $followedStreamers)
+    {
+        $conn = $this->connectToDB();
+        $sql = "UPDATE registredUsers SET followedStreamers = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $followedStreamers, $userId);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+
+
+
 }
