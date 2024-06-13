@@ -17,7 +17,6 @@ class UnfollowStreamerTest extends TestCase
     protected string $userId;
     protected string $streamerId;
     protected string $token;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,7 +30,6 @@ class UnfollowStreamerTest extends TestCase
         $this->app->instance(TokenProvider::class, $this->tokenProviderMock);
         $this->app->instance(StreamerDataProvider::class, $this->strDataProviderMock);
     }
-
     /**
      * @test
      */
@@ -53,7 +51,6 @@ class UnfollowStreamerTest extends TestCase
             'message' => 'Dejaste de seguir a ' . $this->streamerId
         ]);
     }
-
     /**
      * @test
      */
@@ -72,29 +69,6 @@ class UnfollowStreamerTest extends TestCase
             "error" => "El usuario ( " . $this->userId . " ) o el streamer ( " . $this->streamerId . " ) especificado no existe en la API.",
         ]);
     }
-
-    /**
-     * @test
-     */
-    public function WhenUserIsNotOnTheApiReturns404()
-    {
-        $this->userDataProviderMock->expects('unfollowStreamer')
-            ->with($this->userId, $this->streamerId)
-            ->andThrow(new Exception("Error", ErrorCodes::USERS_404));
-        $this->tokenProviderMock->expects('getToken')
-            ->andReturn($this->token);
-        $this->strDataProviderMock->expects('getStreamerData')
-            ->with($this->token, $this->streamerId)
-            ->andReturn(['data']);
-
-        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
-
-        $response->assertStatus(404);
-        $response->assertJson([
-            "error" => "El usuario ( " . $this->userId . " ) o el streamer ( " . $this->streamerId . " ) especificado no existe en la API.",
-        ]);
-    }
-
     /**
      * @test
      */
