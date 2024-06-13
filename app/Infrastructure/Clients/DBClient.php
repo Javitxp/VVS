@@ -335,4 +335,24 @@ class DBClient
 
     }
 
+    public function checkUsername($username)
+    {
+        $count = 0;
+        $conn = $this->connectToDB();
+        try {
+            $sql = "SELECT COUNT(*) FROM registredUsers WHERE username = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $stmt->bind_result($count);
+            $stmt->fetch();
+            $stmt->close();
+
+            return $count > 0;
+        } catch (Exception $e) {
+            echo "Error al verificar el nombre de usuario: " . $e->getMessage();
+            return false;
+        }
+    }
+
 }
