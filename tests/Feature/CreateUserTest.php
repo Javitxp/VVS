@@ -2,7 +2,6 @@
 
 use App\Infrastructure\Clients\DBClient;
 use App\Models\RegistredUser;
-use App\Services\UserDataManager;
 use App\Utilities\ErrorCodes;
 use Tests\TestCase;
 use Exception;
@@ -11,14 +10,12 @@ use Mockery;
 class CreateUserTest extends TestCase
 {
     protected DBClient $dbClientMock;
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->dbClientMock = Mockery::mock(DBClient::class);
         $this->app->instance(DBClient::class, $this->dbClientMock);
     }
-
     /**
      * @test
      */
@@ -45,7 +42,6 @@ class CreateUserTest extends TestCase
             'message' => 'Usuario creado correctamente'
         ]);
     }
-
     /**
      * @test
      */
@@ -76,7 +72,6 @@ class CreateUserTest extends TestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['username', 'password']);
     }
-
     /**
      * @test
      */
@@ -95,7 +90,6 @@ class CreateUserTest extends TestCase
         $response->assertStatus(409);
         $response->assertJson(['error' => 'El nombre de usuario ya está en uso.']);
     }
-
     /**
      * @test
      */
