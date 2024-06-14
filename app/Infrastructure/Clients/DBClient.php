@@ -2,9 +2,12 @@
 
 namespace App\Infrastructure\Clients;
 
+use App\Models\RegistredUser;
 use App\Utilities\ApiUtils;
+use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use mysqli;
 
 class DBClient
@@ -334,5 +337,68 @@ class DBClient
         }
 
     }
+
+    public function checkUsername($username)
+    {
+        try {
+            return RegistredUser::where('username', $username)->exists();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function insertUser($username, $password)
+    {
+        try {
+            $user = new RegistredUser();
+            $user->username = $username;
+            $user->password = Hash::make($password);
+            $user->followedStreamers = json_encode([]);
+            $user->save();
+            return $user;
+        } catch (Exception $exception) {
+            throw new Exception("Error al crear el usuario.", ErrorCodes::USERS_500);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getAllUsers()
+    {
+        try {
+            return DB::table('registredUsers')
+                ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
+                ->get();
+        } catch (Exception $e) {
+            throw new Exception("Error al obtener la lista de usuarios.", 500);
+        }
+    }
+
+    public function findUserById($userId)
+    {
+        return RegistredUser::find($userId);
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function updateUserFollowedStreamers(RegistredUser $user, $followedStreamers)
+    {
+        try {
+            $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
+            $user->save();
+            return $user;
+        } catch (Exception $exception) {
+            throw new Exception("Error del servidor al dejar de seguir al streamer.", 500);
+        }
+    }
+
+
+
 
 }
