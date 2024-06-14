@@ -390,7 +390,7 @@ class DBClient
     public function updateUserFollowedStreamers(RegistredUser $user, $followedStreamers)
     {
         try {
-            $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
+            $user->followedStreamers = $followedStreamers;
             $user->save();
             return $user;
         } catch (Exception $exception) {
