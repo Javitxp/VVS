@@ -393,7 +393,7 @@ class DBClient
             $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
             $user->save();
             return $user;
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             throw new Exception("Error del servidor al dejar de seguir al streamer.", 500);
         }
     }
