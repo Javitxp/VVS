@@ -34,9 +34,12 @@ class UserDataProviderTest extends TestCase
     {
         $username = 'testuser';
         $password = 'password123';
-
-        $this->dbClientMock->shouldReceive('checkUsername')->with($username)->andReturn(false);
-        $this->dbClientMock->shouldReceive('insertUser')->with($username, $password)->andReturn(new RegistredUser());
+        $this->dbClientMock->expects('checkUsername')
+            ->with($username)
+            ->andReturn(false);
+        $this->dbClientMock->expects('insertUser')
+            ->with($username, $password)
+            ->andReturn(new RegistredUser());
 
         $result = $this->userDataProvider->createUser($username, $password);
 
@@ -53,7 +56,9 @@ class UserDataProviderTest extends TestCase
         $this->expectExceptionCode(ErrorCodes::USERS_409);
         $username = 'testuser';
         $password = 'password123';
-        $this->dbClientMock->shouldReceive('checkUsername')->with($username)->andReturn(true);
+        $this->dbClientMock->expects('checkUsername')
+            ->with($username)
+            ->andReturn(true);
 
         $this->userDataProvider->createUser($username, $password);
     }
@@ -68,8 +73,12 @@ class UserDataProviderTest extends TestCase
         $this->expectExceptionCode(ErrorCodes::USERS_500);
         $username = 'testuser';
         $password = 'password123';
-        $this->dbClientMock->shouldReceive('checkUsername')->with($username)->andReturn(false);
-        $this->dbClientMock->shouldReceive('insertUser')->with($username, $password)->andThrow(new Exception());
+        $this->dbClientMock->expects('checkUsername')
+            ->with($username)
+            ->andReturn(false);
+        $this->dbClientMock->expects('insertUser')
+            ->with($username, $password)
+            ->andThrow(new Exception());
 
         $this->userDataProvider->createUser($username, $password);
     }
@@ -80,7 +89,8 @@ class UserDataProviderTest extends TestCase
     public function GetsUsers()
     {
         $users = [['id' => 1, 'username' => 'testuser']];
-        $this->dbClientMock->shouldReceive('getAllUsers')->andReturn($users);
+        $this->dbClientMock->expects('getAllUsers')
+            ->andReturn($users);
 
         $result = $this->userDataProvider->getAllUsers();
 
@@ -95,7 +105,8 @@ class UserDataProviderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("Error al obtener la lista de usuarios.");
         $this->expectExceptionCode(ErrorCodes::USERS_500);
-        $this->dbClientMock->shouldReceive('getAllUsers')->andThrow(new Exception());
+        $this->dbClientMock->expects('getAllUsers')
+            ->andThrow(new Exception());
 
         $this->userDataProvider->getAllUsers();
     }
@@ -161,8 +172,10 @@ class UserDataProviderTest extends TestCase
                 'startedAt' => '2024-06-13T12:00:00Z',
             ],
         ];
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
-        $this->apiClientMock->shouldReceive('getStreamsFromStreamer')
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn($user);
+        $this->apiClientMock->expects('getStreamsFromStreamer')
             ->with($token, Mockery::subset([1, 2, 3]))
             ->andReturn($streamData);
 
@@ -181,8 +194,9 @@ class UserDataProviderTest extends TestCase
         $this->expectExceptionCode(ErrorCodes::TIMELINE_404);
         $userId = 1;
         $token = 'test-token';
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn(null);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn(null);
 
         $this->userDataProvider->getUserFollowedStreamersTimeline($token, $userId);
     }
@@ -196,7 +210,9 @@ class UserDataProviderTest extends TestCase
         $token = 'test-token';
         $user = new RegistredUser();
         $user->followedStreamers = json_encode([]);
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn($user);
 
         $result = $this->userDataProvider->getUserFollowedStreamersTimeline($token, $userId);
 
@@ -212,9 +228,8 @@ class UserDataProviderTest extends TestCase
         $streamerId = 2;
         $user = new RegistredUser();
         $user->followedStreamers = json_encode([1]);
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
-        $this->dbClientMock->shouldReceive('updateUserFollowedStreamers')
+        $this->dbClientMock->expects('findUserById')->with($userId)->andReturn($user);
+        $this->dbClientMock->expects('updateUserFollowedStreamers')
             ->with(Mockery::on(function ($argument) use ($user) {
                 return $argument == $user;
             }), json_encode([1, $streamerId], JSON_UNESCAPED_SLASHES))
@@ -233,11 +248,11 @@ class UserDataProviderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("El usuario especificado no existe.");
         $this->expectExceptionCode(ErrorCodes::USERS_404);
-
         $userId = 1;
         $streamerId = 2;
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn(null);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn(null);
 
         $this->userDataProvider->followStreamer($userId, $streamerId);
     }
@@ -250,13 +265,13 @@ class UserDataProviderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("El usuario ya está siguiendo al streamer.");
         $this->expectExceptionCode(ErrorCodes::FOLLOW_409);
-
         $userId = 1;
         $streamerId = 2;
         $user = new RegistredUser();
         $user->followedStreamers = json_encode([1, 2]);
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn($user);
 
         $this->userDataProvider->followStreamer($userId, $streamerId);
     }
@@ -270,9 +285,10 @@ class UserDataProviderTest extends TestCase
         $streamerId = 2;
         $user = new RegistredUser();
         $user->followedStreamers = json_encode([1, 2]);
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
-        $this->dbClientMock->shouldReceive('updateUserFollowedStreamers')
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn($user);
+        $this->dbClientMock->expects('updateUserFollowedStreamers')
             ->with(Mockery::on(function ($argument) use ($user) {
                 return $argument == $user;
             }), json_encode([1], JSON_UNESCAPED_SLASHES))
@@ -291,11 +307,11 @@ class UserDataProviderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("El usuario especificado no existe.");
         $this->expectExceptionCode(ErrorCodes::USERS_404);
-
         $userId = 1;
         $streamerId = 2;
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn(null);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn(null);
 
         $this->userDataProvider->unfollowStreamer($userId, $streamerId);
     }
@@ -308,13 +324,13 @@ class UserDataProviderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage("El usuario no está siguiendo al streamer");
         $this->expectExceptionCode(500);
-
         $userId = 1;
         $streamerId = 2;
         $user = new RegistredUser();
         $user->followedStreamers = json_encode([1]);
-
-        $this->dbClientMock->shouldReceive('findUserById')->with($userId)->andReturn($user);
+        $this->dbClientMock->expects('findUserById')
+            ->with($userId)
+            ->andReturn($user);
 
         $this->userDataProvider->unfollowStreamer($userId, $streamerId);
     }
