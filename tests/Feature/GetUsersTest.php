@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\UserDataProvider;
+use App\Infrastructure\Clients\DBClient;
 use App\Utilities\ErrorCodes;
 use Tests\TestCase;
 use Exception;
@@ -8,13 +8,13 @@ use Mockery;
 
 class GetUsersTest extends TestCase
 {
-    protected UserDataProvider $userDataProviderMock;
+    protected DBClient $dbClientMock;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $this->app->instance(UserDataProvider::class, $this->userDataProviderMock);
+        $this->dbClientMock = Mockery::mock(DBClient::class);
+        $this->app->instance(DBClient::class, $this->dbClientMock);
     }
 
     /**
@@ -22,7 +22,7 @@ class GetUsersTest extends TestCase
      */
     public function GetsUsers()
     {
-        $this->userDataProviderMock->expects('getAllUsers')->andReturn([
+        $this->dbClientMock->expects('getAllUsers')->andReturn([
             "username" => "somename",
             "followedStreamers" => ["streamer1", "streamer2"]
         ]);
@@ -41,7 +41,7 @@ class GetUsersTest extends TestCase
      */
     public function ReturnsServerErrorWhenFailInGetUsers()
     {
-        $this->userDataProviderMock->expects('getAllUsers')
+        $this->dbClientMock->expects('getAllUsers')
             ->andThrow(new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500));
 
         $response = $this->get('/analytics/users');
