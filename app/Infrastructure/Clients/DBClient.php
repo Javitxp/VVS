@@ -2,9 +2,12 @@
 
 namespace App\Infrastructure\Clients;
 
+use App\Models\RegistredUser;
 use App\Utilities\ApiUtils;
+use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use mysqli;
 
 class DBClient
@@ -337,43 +340,39 @@ class DBClient
 
     public function checkUsername($username)
     {
-        $count = 0;
-        $conn = $this->connectToDB();
         try {
-            $sql = "SELECT COUNT(*) FROM registredUsers WHERE username = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $stmt->bind_result($count);
-            $stmt->fetch();
-            $stmt->close();
-            return $count > 0;
+            return RegistredUser::where('username', $username)->exists();
         } catch (Exception $e) {
             return false;
         }
     }
 
-    public function insertUser($username, $password, $followedStreamers)
+    /**
+     * @throws Exception
+     */
+    public function insertUser($username, $password)
     {
-        $conn = $this->connectToDB();
-        $sql = "INSERT INTO registredUsers (username, password, followedStreamers) VALUES (?,?,?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $username, $password, $followedStreamers);
-        if (!$stmt->execute()) {
-            $this->closeConnectionAndExitDB($conn);
-            throw new Exception("Error al insertar el usuario.");
+        try {
+            $user = new RegistredUser();
+            $user->username = $username;
+            $user->password = Hash::make($password);
+            $user->followedStreamers = json_encode([]);
+            $user->save();
+            return $user;
+        } catch (Exception $exception) {
+            throw new Exception("Error al crear el usuario.", ErrorCodes::USERS_500);
         }
-        $stmt->close();
-        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAllUsers()
     {
         try {
-            $users = DB::table('registredUsers')
+            return DB::table('registredUsers')
                 ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
                 ->get();
-            return $users;
         } catch (Exception $e) {
             throw new Exception("Error al obtener la lista de usuarios.", 500);
         }
@@ -381,27 +380,22 @@ class DBClient
 
     public function findUserById($userId)
     {
-        $conn = $this->connectToDB();
-        $sql = "SELECT * FROM registredUsers WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-        $stmt->close();
-        return $user;
+        return RegistredUser::find($userId);
     }
 
 
-
-    public function updateUserFollowedStreamers($userId, $followedStreamers)
+    /**
+     * @throws Exception
+     */
+    public function updateUserFollowedStreamers(RegistredUser $user, $followedStreamers)
     {
-        $conn = $this->connectToDB();
-        $sql = "UPDATE registredUsers SET followedStreamers = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $followedStreamers, $userId);
-        $stmt->execute();
-        $stmt->close();
+        try {
+            $user->followedStreamers = json_encode($followedStreamers, JSON_UNESCAPED_SLASHES);
+            $user->save();
+            return $user;
+        }catch (Exception $exception) {
+            throw new Exception("Error del servidor al dejar de seguir al streamer.", 500);
+        }
     }
 
 
