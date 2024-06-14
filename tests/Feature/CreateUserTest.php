@@ -1,5 +1,7 @@
 <?php
 
+use App\Infrastructure\Clients\DBClient;
+use App\Models\RegistredUser;
 use App\Services\UserDataManager;
 use App\Utilities\ErrorCodes;
 use Tests\TestCase;
@@ -8,13 +10,13 @@ use Mockery;
 
 class CreateUserTest extends TestCase
 {
-    protected UserDataManager $userDataManagerMock;
+    protected DBClient $dbClientMock;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->userDataManagerMock = Mockery::mock(UserDataManager::class);
-        $this->app->instance(UserDataManager::class, $this->userDataManagerMock);
+        $this->dbClientMock = Mockery::mock(DBClient::class);
+        $this->app->instance(DBClient::class, $this->dbClientMock);
     }
 
     /**
@@ -22,9 +24,14 @@ class CreateUserTest extends TestCase
      */
     public function CreatesUserSuccessfully()
     {
-        $this->userDataManagerMock->expects('createUser')->andReturn((object)[
-            'username' => 'nuevo_usuario',
-        ]);
+        $user = new RegistredUser();
+        $user->username = 'nuevo_usuario';
+        $this->dbClientMock->expects('checkUsername')
+            ->with('nuevo_usuario')
+            ->andReturn(false);
+        $this->dbClientMock->expects('insertUser')
+            ->with('nuevo_usuario', 'nueva_contraseña')
+            ->andReturn($user);
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
@@ -75,8 +82,9 @@ class CreateUserTest extends TestCase
      */
     public function ReturnsConflictWhenUsernameIsTaken()
     {
-        $this->userDataManagerMock->expects('createUser')
-            ->andThrow(new Exception("El nombre de usuario ya está en uso.", ErrorCodes::USERS_409));
+        $this->dbClientMock->expects('checkUsername')
+            ->with('nuevo_usuario')
+            ->andReturn(true);
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
@@ -93,8 +101,14 @@ class CreateUserTest extends TestCase
      */
     public function ReturnsServerErrorWhenFailInCreateUser()
     {
-        $this->userDataManagerMock->expects('createUser')
-            ->andThrow(new Exception("Error del servidor al crear el usuario.", ErrorCodes::USERS_500));
+        $user = new RegistredUser();
+        $user->username = 'nuevo_usuario';
+        $this->dbClientMock->expects('checkUsername')
+            ->with('nuevo_usuario')
+            ->andReturn(false);
+        $this->dbClientMock->expects('insertUser')
+            ->with('nuevo_usuario', 'nueva_contraseña')
+            ->andThrows(new Exception("Error al crear el usuario.", ErrorCodes::USERS_500));
         $userData = [
             'username' => 'nuevo_usuario',
             'password' => 'nueva_contraseña'
