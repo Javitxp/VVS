@@ -28,7 +28,7 @@ class GetTopsOfTheTopsTest extends TestCase
     /**
      * @test
      */
-    public function GetTOTTWithSince(): void
+    public function GetsTOTTWithSince(): void
     {
         $this->dbClient->expects('getToken')->andReturn($this->token);
         $this->apiClient->expects('getTop3Games')->with($this->headers)->andReturn(json_encode(['data' => [['id' => 1, 'name' => 'game1']]]));
@@ -45,7 +45,7 @@ class GetTopsOfTheTopsTest extends TestCase
     /**
      * @test
      */
-    public function GetTOTTWithoutSince(): void
+    public function GetsTOTTWithoutSince(): void
     {
         $this->dbClient->expects('getToken')->andReturn($this->token);
         $this->apiClient->expects('getTop3Games')->with($this->headers)->andReturn(json_encode(['data' => [['id' => 1, 'name' => 'game1']]]));
