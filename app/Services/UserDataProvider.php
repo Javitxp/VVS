@@ -25,22 +25,14 @@ class UserDataProvider
         if($this->dbClient->checkUsername($username)) {
             throw new Exception("El nombre de usuario ya está en uso.", ErrorCodes::USERS_409);
         }
-        try {
-            return $this->dbClient->insertUser($username, $password);
-        } catch (Exception $exception) {
-            throw new Exception("Error al crear el usuario.", ErrorCodes::USERS_500);
-        }
+        return $this->dbClient->insertUser($username, $password);
     }
     /**
      * @throws Exception
      */
     public function getAllUsers()
     {
-        try {
-            return $this->dbClient->getAllUsers();
-        } catch (Exception $exception) {
-            throw new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500);
-        }
+        return $this->dbClient->getAllUsers();
     }
 
     /**

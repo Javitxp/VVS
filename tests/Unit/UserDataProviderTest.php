@@ -78,7 +78,7 @@ class UserDataProviderTest extends TestCase
             ->andReturn(false);
         $this->dbClientMock->expects('insertUser')
             ->with($username, $password)
-            ->andThrow(new Exception());
+            ->andThrow(new Exception("Error al crear el usuario.", ErrorCodes::USERS_500));
 
         $this->userDataProvider->createUser($username, $password);
     }
@@ -106,7 +106,7 @@ class UserDataProviderTest extends TestCase
         $this->expectExceptionMessage("Error al obtener la lista de usuarios.");
         $this->expectExceptionCode(ErrorCodes::USERS_500);
         $this->dbClientMock->expects('getAllUsers')
-            ->andThrow(new Exception());
+            ->andThrow(new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500));
 
         $this->userDataProvider->getAllUsers();
     }
