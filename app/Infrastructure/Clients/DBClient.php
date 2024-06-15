@@ -373,15 +373,12 @@ class DBClient
             $users = DB::table('registredUsers')
                 ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
                 ->get();
-
-            // Decode the JSON string into an array
             foreach ($users as $user) {
                 $user->followedStreamers = json_decode($user->followedStreamers);
             }
-
             return $users;
         } catch (Exception $e) {
-            throw new Exception("Error al obtener la lista de usuarios.", 500);
+            throw new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500);
         }
     }
 
