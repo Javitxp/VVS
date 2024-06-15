@@ -27,7 +27,7 @@ class TopsOfTheTopsDataManagerTest extends TestCase
             ->with('token', '')
             ->andReturn(['data']);
 
-        $result = $this->tottDataManager->getTopsOfTheTops('');
+        $result = $this->tottDataManager->getTopsOfTheTops(null);
 
         $this->assertEquals(['data'], $result);
     }
