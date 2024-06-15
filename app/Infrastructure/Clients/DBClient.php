@@ -3,7 +3,6 @@
 namespace App\Infrastructure\Clients;
 
 use App\Models\RegistredUser;
-use App\Utilities\ApiUtils;
 use App\Utilities\ErrorCodes;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -193,78 +192,12 @@ class DBClient
             return false;
         }
     }
-
-    public function getAndInsertGame($gameId, $name)
-    {
-        $apiController = new ApiUtils();
-        $conn = $this->connectToDB();
-        $array = $apiController->getTop40Videos($gameId);
-        $topUser = $array[0];
-        $user = $topUser["user_name"];
-        $this->setNew40GamesInDB($array, $conn);
-        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
-        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
-        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
-
-        $allData = array(
-            "game_id" => $gameId,
-            "game_name" => $name,
-            "user_name" => $user,
-            "total_videos" => $totalVideos,
-            "total_views" => $sum,
-            "most_viewed_title" => $dataMostViewed["most_viewed_title"],
-            "most_viewed_views" => $dataMostViewed["most_viewed_views"],
-            "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
-            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
-        );
-        $this->insertNewGame($conn, $allData);
-        $this->closeConnectionDB($conn);
-        return $allData;
-    }
-
     public function getAndInsertGameTopsOfTheTops($gameId, $name, $top40Videos)
     {
         $conn = $this->connectToDB();
         $topUser = $top40Videos[0];
         $user = $topUser["user_name"];
         $this->setNew40GamesInDB($top40Videos, $conn);
-        $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
-        $sum = $this->getSumViewsFromUserFromDB($user, $conn);
-        $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
-
-        $allData = array(
-            "game_id" => $gameId,
-            "game_name" => $name,
-            "user_name" => $user,
-            "total_videos" => $totalVideos,
-            "total_views" => $sum,
-            "most_viewed_title" => $dataMostViewed["most_viewed_title"],
-            "most_viewed_views" => $dataMostViewed["most_viewed_views"],
-            "most_viewed_duration" => $dataMostViewed["most_viewed_duration"],
-            "most_viewed_created_at" => $dataMostViewed["most_viewed_created_at"]
-        );
-        $this->insertNewGame($conn, $allData);
-        $this->closeConnectionDB($conn);
-        return $allData;
-    }
-
-    public function updateGame($gameId, $name)
-    {
-        $apiController = new ApiUtils();
-        $conn = $this->connectToDB();
-        try {
-            $sql = "DELETE FROM presentar WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $gameId);
-            $stmt->execute();
-            $stmt->close();
-        } catch (Exception $e) {
-            return;
-        }
-        $array = $apiController->getTop40Videos($gameId);
-        $topUser = $array[0];
-        $user = $topUser["user_name"];
-        $this->setNew40GamesInDB($array, $conn);
         $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
         $sum = $this->getSumViewsFromUserFromDB($user, $conn);
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
