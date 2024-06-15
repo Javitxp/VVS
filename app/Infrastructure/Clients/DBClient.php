@@ -370,13 +370,21 @@ class DBClient
     public function getAllUsers()
     {
         try {
-            return DB::table('registredUsers')
+            $users = DB::table('registredUsers')
                 ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
                 ->get();
+
+            // Decode the JSON string into an array
+            foreach ($users as $user) {
+                $user->followedStreamers = json_decode($user->followedStreamers);
+            }
+
+            return $users;
         } catch (Exception $e) {
             throw new Exception("Error al obtener la lista de usuarios.", 500);
         }
     }
+
 
     public function findUserById($userId)
     {
