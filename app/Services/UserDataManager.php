@@ -2,26 +2,49 @@
 
 namespace App\Services;
 
+use Exception;
+
 class UserDataManager
 {
-    private $tokenProvider;
-    private $userDataProvider;
+    private UserDataProvider $userDataProvider;
+    private TokenProvider $tokenProvider;
 
-    public function __construct(TokenProvider $tokenProvider, UserDataProvider $userDataProvider)
+    public function __construct(UserDataProvider $userDataProvider, TokenProvider $tokenProvider)
     {
-        $this->tokenProvider = $tokenProvider;
         $this->userDataProvider = $userDataProvider;
+        $this->tokenProvider = $tokenProvider;
     }
 
-    public function getUserData()
+    /**
+     * @throws Exception
+     */
+    public function createUser($username, $password)
     {
-        $response = $this->userDataProvider->getUserData($this->tokenProvider->getToken());
-        return $response;
+        return $this->userDataProvider->createUser($username, $password);
     }
-
-    public function setUserId($userId)
+    /**
+     * @throws Exception
+     */
+    public function getAllUsers()
     {
-        $this->userDataProvider->setUserId($userId);
+        return $this->userDataProvider->getAllUsers();
     }
-
+    /**
+     * @throws Exception
+     */
+    public function getUserFollowedStreamersTimeline($userId)
+    {
+        return $this->userDataProvider->getUserFollowedStreamersTimeline($this->tokenProvider->getToken(), $userId);
+    }
+    /**
+     * @throws Exception
+     */
+    public function followStreamer($userId, $streamerId)
+    {
+        return $this->userDataProvider->followStreamer($userId, $streamerId);
+    }
+    public function unfollowStreamer($userId, $streamerId)
+    {
+        return $this->userDataProvider->unfollowStreamer($userId, $streamerId);
+    }
 }

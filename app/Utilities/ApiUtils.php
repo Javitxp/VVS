@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Utilities;
 
 use App\Infrastructure\Clients\ApiClient;
 use Illuminate\Support\Facades\Http;
 
-class ApiController extends Controller
+class ApiUtils
 {
     public function getTop3Games()
     {
@@ -30,8 +30,9 @@ class ApiController extends Controller
         }
     }
 
-    public function getTop40Videos($id) {
-        $url = 'https://api.twitch.tv/helix/videos?game_id='.$id.'&first=40&sort=views';
+    public function getTop40Videos($gameId)
+    {
+        $url = 'https://api.twitch.tv/helix/videos?game_id='.$gameId.'&first=40&sort=views';
         $apiClient = new ApiClient();
 
         $headers = [

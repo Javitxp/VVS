@@ -1,15 +1,25 @@
 <?php
 
 
-use App\Infrastructure\Controllers\UsersController;
-use App\Infrastructure\Controllers\StreamsController;
-use App\Infrastructure\Controllers\TopsOfTheTopsController;
+use App\Infrastructure\Controllers\CreateUserController;
+use App\Infrastructure\Controllers\FollowStreamerController;
+use App\Infrastructure\Controllers\UnfollowStreamerController;
+use App\Infrastructure\Controllers\GetStreamersController;
+use App\Infrastructure\Controllers\GetStreamsController;
+use App\Infrastructure\Controllers\GetTimelineController;
+use App\Infrastructure\Controllers\GetTopsOfTheTopsController;
+use App\Infrastructure\Controllers\GetUsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/analytics/users', UsersController::class);
-Route::get('/analytics/streams', StreamsController::class);
-Route::get('/analytics/topsofthetops', TopsOfTheTopsController::class);
+Route::get('/analytics/streamers', GetStreamersController::class);
+Route::get('/analytics/streams', GetStreamsController::class);
+Route::get('/analytics/topsofthetops', GetTopsOfTheTopsController::class);
+Route::post('/analytics/users', CreateUserController::class);
+Route::get('analytics/users', GetUsersController::class);
+Route::get('/analytics/timeline/{userId}', GetTimelineController::class);
+Route::post('/analytics/follow', FollowStreamerController::class);
+Route::delete('/analytics/unfollow', UnfollowStreamerController::class);

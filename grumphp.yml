@@ -33,6 +33,12 @@ grumphp:
             verbose: true
             config: .php-cs-fixer.dist.php
             triggered_by: ['php']
+        phpunit:
+          testsuite: Feature
+        phpmd:
+          triggered_by: [ 'php' ]
+          ruleset: ['phpmd.xml']
+          report_format: text
 
 
     testsuites: []

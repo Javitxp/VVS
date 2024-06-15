@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Exception;
+
 class StreamsDataManager
 {
     private TokenProvider $tokenProvider;
@@ -12,10 +14,22 @@ class StreamsDataManager
         $this->streamsDataProvider = $streamsDataProvider;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getStreams()
     {
-        $response = $this->streamsDataProvider->execute($this->tokenProvider->getToken());
-        return $response;
+        $streams = $this->streamsDataProvider->execute($this->tokenProvider->getToken());
+        $filteredStreams = [];
+        foreach ($streams as $stream) {
+            $filteredStream = [
+                'title' => $stream['title'],
+                'user_name' => $stream['user_name']
+            ];
+            $filteredStreams[] = $filteredStream;
+        }
+
+        return $filteredStreams;
     }
 
 }

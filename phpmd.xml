@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="reglas">
+    <description>reglas para vvs</description>
+    <rule ref="vendor/phpmd/phpmd/src/main/resources/rulesets/cleancode.xml">
+        <exclude name="ElseExpression"/>
+        <exclude name="StaticAccess"/>
+        <exclude name="IfStatementAssignment"/>
+    </rule>
+    <rule ref="vendor/phpmd/phpmd/src/main/resources/rulesets/naming.xml">
+        <exclude name="LongVariable"/>
+    </rule>
+</ruleset>
+
+

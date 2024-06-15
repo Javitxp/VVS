@@ -2,8 +2,11 @@
 
 namespace App\Infrastructure\Clients;
 
-use App\Infrastructure\Controllers\ApiController;
+use App\Models\RegistredUser;
+use App\Utilities\ErrorCodes;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use mysqli;
 
 class DBClient
@@ -138,12 +141,12 @@ class DBClient
         }
     }
 
-    public function getLast10($id)
+    public function getLast10($videoId)
     {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(MINUTE, Tiempo, NOW()) < 10 AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
-        $statement->bind_param("i", $id);
+        $statement->bind_param("i", $videoId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
@@ -154,12 +157,12 @@ class DBClient
         }
     }
 
-    public function getSince($seconds, $id)
+    public function getSince($seconds, $videoId)
     {
         $conn = $this->connectToDB();
         $sql = "SELECT * FROM presentar WHERE TIMESTAMPDIFF(SECOND, Tiempo, NOW()) < ? AND id = ? LIMIT 1;";
         $statement = $conn->prepare($sql);
-        $statement->bind_param("ii", $seconds, $id);
+        $statement->bind_param("ii", $seconds, $videoId);
         $statement->execute();
         $result = $statement->get_result();
         if ($result->num_rows > 0) {
@@ -170,13 +173,14 @@ class DBClient
         }
     }
 
-    public function checkGameId($id)
+    public function checkGameId($gameId)
     {
+        $count = 0;
         $conn = $this->connectToDB();
         try {
             $sql = "SELECT COUNT(*) FROM presentar WHERE ID = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $gameId);
             $stmt->execute();
             $stmt->bind_result($count);
             $stmt->fetch();
@@ -188,21 +192,18 @@ class DBClient
             return false;
         }
     }
-
-    public function getAndInsertGame($id, $name)
+    public function getAndInsertGameTopsOfTheTops($gameId, $name, $top40Videos)
     {
-        $apiController = new ApiController();
         $conn = $this->connectToDB();
-        $array = $apiController->getTop40Videos($id);
-        $topUser = $array[0];
+        $topUser = $top40Videos[0];
         $user = $topUser["user_name"];
-        $this->setNew40GamesInDB($array, $conn);
+        $this->setNew40GamesInDB($top40Videos, $conn);
         $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
         $sum = $this->getSumViewsFromUserFromDB($user, $conn);
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,
@@ -216,30 +217,27 @@ class DBClient
         $this->closeConnectionDB($conn);
         return $allData;
     }
-
-    public function updateGame($id, $name)
+    public function updateGameTopsOfTheTops($gameId, $name, $top40Videos)
     {
-        $apiController = new ApiController();
         $conn = $this->connectToDB();
         try {
             $sql = "DELETE FROM presentar WHERE id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param("i", $gameId);
             $stmt->execute();
             $stmt->close();
         } catch (Exception $e) {
             return;
         }
-        $array = $apiController->getTop40Videos($id);
-        $topUser = $array[0];
+        $topUser = $top40Videos[0];
         $user = $topUser["user_name"];
-        $this->setNew40GamesInDB($array, $conn);
+        $this->setNew40GamesInDB($top40Videos, $conn);
         $totalVideos = $this->getVideosFromUserFromDB($user, $conn);
         $sum = $this->getSumViewsFromUserFromDB($user, $conn);
         $dataMostViewed = $this->getMostViewedFromUserFromDB($user, $conn);
 
         $allData = array(
-            "game_id" => $id,
+            "game_id" => $gameId,
             "game_name" => $name,
             "user_name" => $user,
             "total_videos" => $totalVideos,
@@ -256,34 +254,89 @@ class DBClient
 
     public function getToken()
     {
-        $conn = $this->connectToDB();
-        $sql = "SELECT value FROM token;";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            return $row["value"];
+        $token = DB::table('token')->first();
+
+        return $token?->value;
+    }
+
+    public function replaceToken(String $value)
+    {
+        $token = DB::table('token')->first();
+
+        if (!$token) {
+            DB::table('token')->insert(['value' => $value]);
         } else {
-            return null;
+            DB::table('token')->where('id', $token->id)->update(['value' => $value]);
+        }
+
+    }
+
+    public function checkUsername($username)
+    {
+        try {
+            return RegistredUser::where('username', $username)->exists();
+        } catch (Exception $e) {
+            return false;
         }
     }
 
-    public function replaceToken(String $token)
+    /**
+     * @throws Exception
+     */
+    public function insertUser($username, $password)
     {
-        $conn = $this->connectToDB();
-        $sql = "DELETE from token;";
-        $result = $conn->query($sql);
-        if($result === false) {
-            return false;
-        }
-        $sql = "INSERT into token (value) VALUES (?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $token);
-        $stmt->execute();
-        if ($stmt->affected_rows > 0) {
-            return true;
-        } else {
-            return false;
+        try {
+            $user = new RegistredUser();
+            $user->username = $username;
+            $user->password = Hash::make($password);
+            $user->followedStreamers = json_encode([]);
+            $user->save();
+            return $user;
+        } catch (Exception $exception) {
+            throw new Exception("Error al crear el usuario.", ErrorCodes::USERS_500);
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    public function getAllUsers()
+    {
+        try {
+            $users = DB::table('registredUsers')
+                ->select('username', DB::raw('JSON_UNQUOTE(followedStreamers) as followedStreamers'))
+                ->get();
+            foreach ($users as $user) {
+                $user->followedStreamers = json_decode($user->followedStreamers);
+            }
+            return $users;
+        } catch (Exception $e) {
+            throw new Exception("Error al obtener la lista de usuarios.", ErrorCodes::USERS_500);
+        }
+    }
+
+
+    public function findUserById($userId)
+    {
+        return RegistredUser::find($userId);
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function updateUserFollowedStreamers(RegistredUser $user, $followedStreamers)
+    {
+        try {
+            $user->followedStreamers = $followedStreamers;
+            $user->save();
+            return $user;
+        } catch (Exception $exception) {
+            throw new Exception("Error del servidor al dejar de seguir al streamer.", 500);
+        }
+    }
+
+
+
 
 }

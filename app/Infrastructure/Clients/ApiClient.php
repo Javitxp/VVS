@@ -4,6 +4,8 @@ namespace App\Infrastructure\Clients;
 
 use Exception;
 use App\Utilities\ErrorCodes;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 class ApiClient
 {
@@ -43,12 +45,14 @@ class ApiClient
 
         if (isset($jsonResponse['access_token'])) {
             return $jsonResponse['access_token'];
-        } else {
-            echo "No se pudo encontrar el access_token en la respuesta.";
-            exit;
         }
+        echo "No se pudo encontrar el access_token en la respuesta.";
+        exit;
     }
 
+    /**
+     * @throws Exception
+     */
     public function makeCurlCall($url, $headers): String
     {
         $curlHeaders = curl_init();
@@ -74,5 +78,47 @@ class ApiClient
         }
 
         return $response;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getTop3Games($headers)
+    {
+        $url = 'https://api.twitch.tv/helix/games/top?first=3';
+
+        $headers[] = 'Client-Id: ' . env("CLIENT_ID");
+
+        return $this->makeCurlCall($url, $headers);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getTop40Videos($game_id, $headers)
+    {
+        $url = 'https://api.twitch.tv/helix/videos?game_id='.$game_id.'&first=40&sort=views';
+
+        $headers[] = 'Client-Id: ' . env("CLIENT_ID");
+
+        return $this->makeCurlCall($url, $headers);
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function getStreamsFromStreamer($token, $chunk)
+    {
+        $response = Http::withHeaders([
+            'Client-Id' => ENV('CLIENT_ID'),
+            'Authorization' => "Bearer $token",
+        ])->get('https://api.twitch.tv/helix/streams', [
+            'user_id' => $chunk,
+        ]);
+        if ($response->failed()) {
+            throw new Exception("Error al obtener los streams de Twitch.", ErrorCodes::TIMELINE_500);
+        }
+        return $response->json('data');
     }
 }
