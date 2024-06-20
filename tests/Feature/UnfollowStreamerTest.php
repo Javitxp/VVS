@@ -1,7 +1,7 @@
 <?php
 
+use App\Infrastructure\Clients\DBClient;
 use App\Models\RegistredUser;
-use App\Services\UserDataProvider;
 use App\Services\StreamerDataProvider;
 use App\Services\TokenProvider;
 use App\Utilities\ErrorCodes;
@@ -10,115 +10,129 @@ use Exception;
 
 class UnfollowStreamerTest extends TestCase
 {
+    protected DBClient $dbClientMock;
+    protected TokenProvider $tokenProviderMock;
+    protected StreamerDataProvider $strDataProviderMock;
+    protected string $userId;
+    protected string $streamerId;
+    protected string $token;
+    protected RegistredUser $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->userId = "1";
+        $this->streamerId = "1";
+        $this->token = 'token';
+        $this->user = new RegistredUser();
+        $this->dbClientMock = Mockery::mock(DBClient::class);
+        $this->tokenProviderMock = Mockery::mock(TokenProvider::class);
+        $this->strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
+        $this->tokenProviderMock->expects('getToken')
+            ->andReturn($this->token);
+        $this->app->instance(DBClient::class, $this->dbClientMock);
+        $this->app->instance(TokenProvider::class, $this->tokenProviderMock);
+        $this->app->instance(StreamerDataProvider::class, $this->strDataProviderMock);
+    }
+
     /**
      * @test
      */
     public function UnfollowSuccessful()
     {
-        $userId = "1";
-        $streamerId = "1";
-        $token = 'token';
-        $userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $tokenProviderMock = Mockery::mock(TokenProvider::class);
-        $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-        $userDataProviderMock->expects('unfollowStreamer')
-            ->with($userId, $streamerId)
+        $this->user->followedStreamers = json_encode([$this->streamerId]);
+        $this->dbClientMock->expects('findUserById')
+            ->with($this->userId)
+            ->andReturn($this->user);
+        $this->dbClientMock->expects('updateUserFollowedStreamers')
+            ->with($this->user, json_encode([], JSON_UNESCAPED_SLASHES))
             ->andReturn(new RegistredUser());
-        $tokenProviderMock->expects('getToken')
-            ->andReturn($token);
-        $strDataProviderMock->expects('getStreamerData')
-            ->with($token, $streamerId)
+        $this->strDataProviderMock->expects('getStreamerData')
+            ->with($this->token, $this->streamerId)
             ->andReturn(['data']);
-        $this->app->instance(UserDataProvider::class, $userDataProviderMock);
-        $this->app->instance(TokenProvider::class, $tokenProviderMock);
-        $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
 
-        $response = $this->delete('analytics/unfollow', ['userId' => $userId, 'streamerId' => $streamerId]);
+        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
 
         $response->assertStatus(200);
         $response->assertJson([
-            'message' => 'Dejaste de seguir a ' . $streamerId
+            'message' => 'Dejaste de seguir a ' . $this->streamerId
         ]);
     }
+
     /**
      * @test
      */
     public function WhenStreamerIsNotOnTheApiReturns404()
     {
-        $userId = "1";
-        $streamerId = "1";
-        $token = 'token';
-        $tokenProviderMock = Mockery::mock(TokenProvider::class);
-        $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-        $tokenProviderMock->expects('getToken')
-            ->andReturn($token);
-        $strDataProviderMock->expects('getStreamerData')
-            ->with($token, $streamerId)
+        $this->strDataProviderMock->expects('getStreamerData')
+            ->with($this->token, $this->streamerId)
             ->andThrow(new Exception("No streamer", ErrorCodes::STREAMERS_404));
-        $this->app->instance(TokenProvider::class, $tokenProviderMock);
-        $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
 
-        $response = $this->delete('analytics/unfollow', ['userId' => $userId, 'streamerId' => $streamerId]);
+        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
 
         $response->assertStatus(404);
         $response->assertJson([
-            "error" => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " ) especificado no existe en la API.",
+            "error" => "El usuario ( " . $this->userId . " ) o el streamer ( " . $this->streamerId . " ) especificado no existe en la API.",
         ]);
     }
+
     /**
      * @test
      */
     public function WhenUserIsNotOnTheApiReturns404()
     {
-        $userId = "1";
-        $streamerId = "1";
-        $token = 'token';
-        $userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $tokenProviderMock = Mockery::mock(TokenProvider::class);
-        $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-        $userDataProviderMock->expects('unfollowStreamer')
-            ->with($userId, $streamerId)
-            ->andThrow(new Exception("Error", ErrorCodes::USERS_404));
-        $tokenProviderMock->expects('getToken')
-            ->andReturn($token);
-        $strDataProviderMock->expects('getStreamerData')
-            ->with($token, $streamerId)
+        $this->dbClientMock->expects('findUserById')
+            ->with($this->userId)
+            ->andReturn(null);
+        $this->strDataProviderMock->expects('getStreamerData')
+            ->with($this->token, $this->streamerId)
             ->andReturn(['data']);
-        $this->app->instance(UserDataProvider::class, $userDataProviderMock);
-        $this->app->instance(TokenProvider::class, $tokenProviderMock);
-        $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
 
-        $response = $this->delete('analytics/unfollow', ['userId' => $userId, 'streamerId' => $streamerId]);
+        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
 
         $response->assertStatus(404);
         $response->assertJson([
-            "error" => "El usuario ( " . $userId . " ) o el streamer ( " . $streamerId . " ) especificado no existe en la API.",
+            "error" => "El usuario ( " . $this->userId . " ) o el streamer ( " . $this->streamerId . " ) especificado no existe en la API.",
         ]);
     }
     /**
      * @test
      */
+    public function WhenUserDoesntFollowTheStreamerReturnsServerError()
+    {
+        $this->user->followedStreamers = json_encode([]);
+        $this->dbClientMock->expects('findUserById')
+            ->with($this->userId)
+            ->andReturn($this->user);
+        $this->strDataProviderMock->expects('getStreamerData')
+            ->with($this->token, $this->streamerId)
+            ->andReturn(['data']);
+
+        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
+
+        $response->assertStatus(500);
+        $response->assertJson([
+            "error" => "Internal Server Error : Error del servidor al dejar de seguir al streamer.",
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function WhenServerFailsReturns500()
     {
-        $userId = "1";
-        $streamerId = "1";
-        $token = 'token';
-        $userDataProviderMock = Mockery::mock(UserDataProvider::class);
-        $tokenProviderMock = Mockery::mock(TokenProvider::class);
-        $strDataProviderMock = Mockery::mock(StreamerDataProvider::class);
-        $userDataProviderMock->expects('unfollowStreamer')
-            ->with($userId, $streamerId)
+        $this->user->followedStreamers = json_encode([$this->streamerId]);
+        $this->dbClientMock->expects('findUserById')
+            ->with($this->userId)
+            ->andReturn($this->user);
+        $this->dbClientMock->expects('updateUserFollowedStreamers')
+            ->with($this->user, json_encode([], JSON_UNESCAPED_SLASHES))
             ->andThrow(new Exception("Server Error", 500));
-        $tokenProviderMock->expects('getToken')
-            ->andReturn($token);
-        $strDataProviderMock->expects('getStreamerData')
-            ->with($token, $streamerId)
+        $this->strDataProviderMock->expects('getStreamerData')
+            ->with($this->token, $this->streamerId)
             ->andReturn(['data']);
-        $this->app->instance(UserDataProvider::class, $userDataProviderMock);
-        $this->app->instance(TokenProvider::class, $tokenProviderMock);
-        $this->app->instance(StreamerDataProvider::class, $strDataProviderMock);
 
-        $response = $this->delete('analytics/unfollow', ['userId' => $userId, 'streamerId' => $streamerId]);
+        $response = $this->delete('analytics/unfollow', ['userId' => $this->userId, 'streamerId' => $this->streamerId]);
 
         $response->assertStatus(500);
         $response->assertJson([

@@ -4,6 +4,8 @@ namespace App\Infrastructure\Clients;
 
 use Exception;
 use App\Utilities\ErrorCodes;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 class ApiClient
 {
@@ -100,5 +102,23 @@ class ApiClient
         $headers[] = 'Client-Id: ' . env("CLIENT_ID");
 
         return $this->makeCurlCall($url, $headers);
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws Exception
+     */
+    public function getStreamsFromStreamer($token, $chunk)
+    {
+        $response = Http::withHeaders([
+            'Client-Id' => ENV('CLIENT_ID'),
+            'Authorization' => "Bearer $token",
+        ])->get('https://api.twitch.tv/helix/streams', [
+            'user_id' => $chunk,
+        ]);
+        if ($response->failed()) {
+            throw new Exception("Error al obtener los streams de Twitch.", ErrorCodes::TIMELINE_500);
+        }
+        return $response->json('data');
     }
 }

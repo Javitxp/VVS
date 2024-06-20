@@ -15,7 +15,7 @@ class TopsOfTheTopsDataManager
     /**
      * @throws \Exception
      */
-    public function getTopsOfTheTops(String $since)
+    public function getTopsOfTheTops($since)
     {
         return $this->topsDataProvider->execute($this->tokenProvider->getToken(), $since);
     }
